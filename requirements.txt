@@ -1,0 +1,8 @@
+transformers
+torch
+bitsandbytes
+peft
+accelerate
+psutil
+flask
+requests

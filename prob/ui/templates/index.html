@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prob AI Dashboard</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        .section { margin-bottom: 30px; border: 1px solid #ccc; padding: 15px; border-radius: 5px; }
+        textarea { width: 100%; height: 100px; }
+        #results { white-space: pre-wrap; background: #f4f4f4; padding: 10px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Prob AI (ROB) Dashboard</h1>
+
+    <div class="section">
+        <h2>Ask / What-If</h2>
+        <textarea id="query" placeholder="Enter question or scenario..."></textarea>
+        <button onclick="ask()">Ask Reasoner</button>
+        <button onclick="whatif()">Run What-If</button>
+    </div>
+
+    <div class="section">
+        <h2>Results</h2>
+        <div id="results">Waiting for input...</div>
+    </div>
+
+    <div class="section">
+        <h2>Sensitive Findings (Awaiting Review)</h2>
+        <div id="review">Loading...</div>
+    </div>
+
+    <div class="section">
+        <h2>Guardrails</h2>
+        <div id="rules">Loading rules...</div>
+        <input type="text" id="newRule" placeholder="Add a new rule...">
+        <button onclick="addRule()">Add Rule</button>
+    </div>
+
+    <script>
+        async function ask() {
+            const query = document.getElementById('query').value;
+            const res = await fetch('/api/ask', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({query})
+            });
+            const data = await res.json();
+            document.getElementById('results').innerText = data.result + "\n\nConfidence: " + data.honesty.confidence;
+        }
+
+        async function whatif() {
+            const scenario = document.getElementById('query').value;
+            const res = await fetch('/api/whatif', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({scenario})
+            });
+            const data = await res.json();
+            document.getElementById('results').innerText = data.result + "\n\nConfidence: " + data.honesty.confidence;
+        }
+
+        async function loadRules() {
+            const res = await fetch('/api/rules');
+            const data = await res.json();
+            let html = "<ul>";
+            data.rules.forEach((r, i) => {
+                html += `<li>${r}</li>`;
+            });
+            html += "</ul>";
+            document.getElementById('rules').innerHTML = html;
+        }
+
+        async function addRule() {
+            const rule = document.getElementById('newRule').value;
+            await fetch('/api/rules', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({rule})
+            });
+            loadRules();
+        }
+
+        async function loadReview() {
+            const res = await fetch('/api/review');
+            const data = await res.json();
+            let html = "";
+            data.forEach(e => {
+                html += `<div><strong>${e.timestamp}</strong>: ${e.result} <button onclick="approve('${e.id}')">Approve</button></div><hr>`;
+            });
+            document.getElementById('review').innerHTML = html || "No pending reviews.";
+        }
+
+        async function approve(id) {
+            await fetch('/api/review', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({id})
+            });
+            loadReview();
+        }
+
+        loadRules();
+        loadReview();
+    </script>
+</body>
+</html>
