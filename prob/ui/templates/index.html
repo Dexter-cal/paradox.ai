@@ -3,498 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prob AI | Autonomous Discovery Dashboard</title>
+    <title>Prob AI | Advanced Discovery Suite</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { background-color: #0d1117; color: #c9d1d9; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji"; }
-        .sidebar { background-color: #161b22; min-height: 100vh; padding: 20px; border-right: 1px solid #30363d; }
-        .nav-link { color: #8b949e; margin-bottom: 10px; transition: color 0.2s; }
-        .nav-link:hover, .nav-link.active { color: #58a6ff; }
-        .nav-link i { margin-right: 10px; }
-        .card { background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; margin-bottom: 20px; }
-        .card-header { border-bottom: 1px solid #30363d; color: #f0f6fc; font-weight: 600; }
+        :root { --sidebar-width: 240px; --bg-main: #0d1117; --bg-card: #161b22; --border-color: #30363d; --text-muted: #8b949e; --text-main: #c9d1d9; --accent: #58a6ff; }
+        body { background-color: var(--bg-main); color: var(--text-main); font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; margin: 0; }
+        .sidebar { background-color: var(--bg-card); min-height: 100vh; padding: 20px; border-right: 1px solid var(--border-color); position: fixed; width: var(--sidebar-width); }
+        .main-content { margin-left: var(--sidebar-width); padding: 20px; padding-bottom: 60px; }
+        .nav-link { color: var(--text-muted); margin-bottom: 8px; transition: color 0.2s; cursor: pointer; display: flex; align-items: center; border-radius: 6px; padding: 10px; text-decoration: none !important; }
+        .nav-link:hover, .nav-link.active { color: var(--accent); background: #21262d; }
+        .nav-link i { width: 24px; margin-right: 12px; font-size: 1.1rem; }
+        .card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 6px; margin-bottom: 20px; }
+        .card-header { border-bottom: 1px solid var(--border-color); color: #f0f6fc; font-weight: 600; padding: 12px 16px; background: transparent; display: flex; justify-content: space-between; align-items: center; }
         .btn-primary { background-color: #238636; border-color: #2ea043; }
         .btn-primary:hover { background-color: #2ea043; }
-        textarea, input { background-color: #0d1117 !important; border: 1px solid #30363d !important; color: #c9d1d9 !important; border-radius: 6px; }
+        textarea, input, select { background-color: #0d1117 !important; border: 1px solid var(--border-color) !important; color: var(--text-main) !important; border-radius: 6px; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        #results { white-space: pre-wrap; background: #0d1117; padding: 15px; border-radius: 6px; border: 1px solid #30363d; min-height: 100px; }
-        .chat-container { height: 400px; overflow-y: auto; border: 1px solid #30363d; border-radius: 6px; padding: 15px; margin-bottom: 15px; background-color: #0d1117; }
-        .message { margin-bottom: 10px; padding: 8px 12px; border-radius: 15px; max-width: 80%; }
-        .user-message { background-color: #238636; color: white; align-self: flex-end; margin-left: auto; }
-        .ai-message { background-color: #30363d; color: #c9d1d9; align-self: flex-start; }
+        #results { white-space: pre-wrap; background: #0d1117; padding: 15px; border-radius: 6px; border: 1px solid var(--border-color); min-height: 120px; font-size: 0.95rem; line-height: 1.6; }
+        .health-footer { position: fixed; bottom: 0; left: var(--sidebar-width); right: 0; background: var(--bg-card); border-top: 1px solid var(--border-color); padding: 8px 24px; font-size: 0.75rem; display: flex; gap: 24px; z-index: 1000; color: var(--text-muted); }
+        .ticker { background: #1c2128; border-bottom: 1px solid var(--border-color); padding: 6px 20px; font-size: 0.8rem; overflow: hidden; white-space: nowrap; }
+        .ticker-inner { display: inline-block; animation: ticker-scroll 30s linear infinite; }
+        @keyframes ticker-scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
     </style>
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-2 sidebar">
-                <h4 class="mb-4 text-white">Prob AI</h4>
-                <nav class="nav flex-column">
-                    <a class="nav-link active" href="#" onclick="showTab('research')"><i class="fas fa-search"></i> Research</a>
-                    <a class="nav-link" href="#" onclick="showTab('chat')"><i class="fas fa-comments"></i> Chat</a>
-                    <a class="nav-link" href="#" onclick="showTab('data')"><i class="fas fa-database"></i> Data Library</a>
-                    <a class="nav-link" href="#" onclick="showTab('code')"><i class="fas fa-code"></i> Coder</a>
-                    <a class="nav-link" href="#" onclick="showTab('models')"><i class="fas fa-microchip"></i> Models</a>
-                     <a class="nav-link" href="#" onclick="showTab('learning')"><i class="fas fa-graduation-cap"></i> Learning</a>
-                    <a class="nav-link" href="#" onclick="showTab('settings')"><i class="fas fa-cog"></i> Settings</a>
-                </nav>
+    <div class="sidebar">
+        <div class="d-flex align-items-center mb-4 ps-2">
+            <i class="fas fa-brain fa-2x text-primary me-2"></i>
+            <h4 class="mb-0 text-white">Prob AI</h4>
+        </div>
+        <nav class="nav flex-column">
+            <a class="nav-link active" onclick="showTab('research')"><i class="fas fa-microscope"></i> Discovery Hub</a>
+            <a class="nav-link" onclick="showTab('swarm')"><i class="fas fa-project-diagram"></i> Swarm Console</a>
+            <a class="nav-link" onclick="showTab('critique')"><i class="fas fa-gavel"></i> Critique Lab</a>
+            <a class="nav-link" onclick="showTab('chat')"><i class="fas fa-comment-dots"></i> Agent Chat</a>
+            <a class="nav-link" onclick="showTab('api')"><i class="fas fa-network-wired"></i> Nexus & API</a>
+        </nav>
+    </div>
+
+    <div class="ticker" style="margin-left: var(--sidebar-width);">
+        <div class="ticker-inner" id="ticker-text">Swarm active... Autonomous research cycle 402... External Nexus online...</div>
+    </div>
+
+    <div class="main-content">
+        <!-- Research Tab -->
+        <div id="research" class="tab-content active">
+            <div class="card">
+                <div class="card-header">Autonomous Reasoning</div>
+                <div class="card-body">
+                    <textarea id="query" class="form-control mb-3" rows="4" placeholder="Enter scenario..."></textarea>
+                    <button class="btn btn-primary" onclick="whatif()">What-If Simulation</button>
+                    <button class="btn btn-info" onclick="ask()">Quick Reason</button>
+                </div>
             </div>
+            <div id="results" class="mb-3">System ready.</div>
+        </div>
 
-            <!-- Main Content -->
-            <div class="col-md-10 p-4">
-
-                <!-- Research Tab -->
-                <div id="research" class="tab-content active">
-                    <div class="card">
-                        <div class="card-header">Autonomous Discovery Engine</div>
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <label class="form-label">Scenario or Question</label>
-                                <textarea id="query" class="form-control" placeholder="What if HIV had a synthetic inhibitor?"></textarea>
-                            </div>
-                            <button class="btn btn-primary" onclick="whatif()">Run What-If Simulation</button>
-                            <button class="btn btn-info ms-2" onclick="ask()">Quick Reason</button>
-                            <button class="btn btn-warning ms-2" onclick="deepDive()">Deep Dive Research</button>
-                        </div>
+        <!-- Swarm Tab -->
+        <div id="swarm" class="tab-content">
+            <div class="card">
+                <div class="card-header">Swarm Mission Deployment</div>
+                <div class="card-body">
+                    <div class="input-group mb-3">
+                        <input type="text" id="swarm-topic" class="form-control" placeholder="Mission topic...">
+                        <button class="btn btn-success" onclick="spawnMission()">Spawn Intelligence</button>
                     </div>
-
-                    <div class="card">
-                         <div class="card-header d-flex justify-content-between">
-                            Results & Insights
-                            <button class="btn btn-sm btn-outline-secondary" onclick="document.getElementById('results').innerText = 'Waiting for input...'">Clear</button>
-                         </div>
-                        <div class="card-body">
-                            <div id="results">Waiting for input...</div>
-                        </div>
-                    </div>
-
-                    <div id="review-section" class="card" style="display:none;">
-                        <div class="card-header text-warning"><i class="fas fa-exclamation-triangle"></i> Sensitive Findings Awaiting Review</div>
-                        <div class="card-body" id="review-list"></div>
-                    </div>
-
-                     <div class="card">
-                         <div class="card-header">Autonomous Self-Modification</div>
-                         <div class="card-body">
-                            <p class="text-secondary small">Tell Prob to rewrite a part of its own logic.</p>
-                            <input type="text" id="rewrite-file" class="form-control mb-2" placeholder="e.g. prob/engines/honesty.py">
-                            <textarea id="rewrite-instruction" class="form-control mb-2" placeholder="Instruction: Improve the evaluation logic to include X..."></textarea>
-                            <button class="btn btn-danger" onclick="selfRewrite()">Rewrite Code</button>
-                            <div id="rewrite-status" class="mt-2"></div>
-                         </div>
-                     </div>
-
-                    <div class="card">
-                        <div class="card-header">Visualization Lab</div>
-                        <div class="card-body">
-                            <p class="text-secondary small">Generate charts from research data (JSON format).</p>
-                            <textarea id="viz-data" class="form-control mb-2" placeholder='{"Category A": 10, "Category B": 20}'></textarea>
-                            <button class="btn btn-sm btn-outline-info" onclick="generateChart()">Generate Bar Chart</button>
-                            <div id="chart-container" class="mt-3 text-center"></div>
-                        </div>
-                    </div>
+                    <h5>Active Intelligence Threads</h5>
+                    <div id="swarm-list"></div>
                 </div>
-
-                 <!-- Learning Tab -->
-                 <div id="learning" class="tab-content">
-                    <div class="card">
-                        <div class="card-header">Upload Local Dataset</div>
-                        <div class="card-body">
-                            <div id="drop-zone" class="p-5 border border-dashed border-secondary rounded text-center mb-3">
-                                <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
-                                <p>Drag and drop dataset files here or click to upload</p>
-                                <input type="file" id="file-upload" style="display:none">
-                            </div>
-                            <div id="upload-progress"></div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">Autonomous Learning Loop</div>
-                        <div class="card-body">
-                            <p class="text-secondary">Tell Prob what knowledge it should acquire autonomously.</p>
-                            <input type="text" id="learn-topic" class="form-control mb-2" placeholder="Topic: e.g. Quantum Biology">
-                            <button class="btn btn-success" onclick="startLearning()">Trigger Learning Cycle</button>
-                            <div id="learning-status" class="mt-3"></div>
-                        </div>
-                    </div>
-                 </div>
-
-                <!-- Chat Tab -->
-                <div id="chat" class="tab-content">
-                    <div class="card">
-                        <div class="card-header">Interactive Agent Chat</div>
-                        <div class="card-body">
-                            <div class="chat-container d-flex flex-column" id="chat-box">
-                                <div class="message ai-message">Hello! I am Prob. How can I assist your discovery today?</div>
-                            </div>
-                            <div class="input-group">
-                                <input type="text" id="chat-input" class="form-control" placeholder="Ask me anything...">
-                                <button class="btn btn-primary" onclick="sendChat()">Send</button>
-                                <button class="btn btn-outline-secondary" onclick="clearChat()">Clear</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Data Library Tab -->
-                <div id="data" class="tab-content">
-                    <div class="card">
-                        <div class="card-header">Web Search</div>
-                        <div class="card-body">
-                            <div class="input-group mb-3">
-                                <input type="text" id="searchQuery" class="form-control" placeholder="Search the web...">
-                                <button class="btn btn-outline-primary" onclick="searchWeb()">Search</button>
-                            </div>
-                            <div id="searchResults"></div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">Hugging Face Datasets</div>
-                        <div class="card-body">
-                            <div class="input-group mb-3">
-                                <input type="text" id="datasetName" class="form-control" placeholder="e.g. imdb">
-                                <button class="btn btn-outline-success" onclick="downloadDataset()">Download & Register</button>
-                            </div>
-                            <div id="localDatasets" class="p-2 border border-secondary rounded">Loading...</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Coder Tab -->
-                <div id="code" class="tab-content">
-                    <div class="card">
-                        <div class="card-header">Sandboxed Python Execution</div>
-                        <div class="card-body">
-                            <input type="text" id="filename" class="form-control mb-2" placeholder="script.py">
-                            <textarea id="code-input" class="form-control mb-2" style="height: 200px;" placeholder="print('Hello World')"></textarea>
-                            <button class="btn btn-primary" onclick="writeAndExecute()">Write & Execute</button>
-                            <div id="code-output" class="mt-3 p-2 bg-black rounded">Output will appear here...</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Models Tab -->
-                <div id="models" class="tab-content">
-                    <div class="card">
-                        <div class="card-header">Model Factory</div>
-                        <div class="card-body">
-                            <p class="text-secondary">Design and build new AI models based on your research.</p>
-                            <input type="text" id="buildDataset" class="form-control mb-2" placeholder="Dataset name (e.g. imdb)">
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" id="useLora">
-                                <label class="form-check-label" for="useLora">Use LoRA Fine-tuning</label>
-                            </div>
-                            <button class="btn btn-primary" onclick="buildModel()">Design & Build Training Script</button>
-                            <div id="modelStatus" class="mt-3"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Settings Tab -->
-                <div id="settings" class="tab-content">
-                    <div class="card">
-                        <div class="card-header">Guardrail Configuration</div>
-                        <div class="card-body">
-                            <div id="rules" class="mb-3">Loading rules...</div>
-                            <div class="input-group">
-                                <input type="text" id="newRule" class="form-control" placeholder="Add a new rule in natural language...">
-                                <button class="btn btn-outline-primary" onclick="addRule()">Add Rule</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
+
+        <!-- Critique Tab -->
+        <div id="critique" class="tab-content">
+            <div class="card">
+                <div class="card-header">Critique & Debate Console</div>
+                <div class="card-body">
+                    <textarea id="critique-finding" class="form-control mb-3" rows="5" placeholder="Paste finding to critique..."></textarea>
+                    <div class="d-flex gap-2 mb-3">
+                        <button class="btn btn-warning" onclick="runCritique()">Scientific Critique</button>
+                        <button class="btn btn-danger" onclick="runDebate()">Neural Debate</button>
+                    </div>
+                    <div id="critique-result" class="p-3 border rounded bg-black small font-monospace"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nexus Tab -->
+        <div id="api" class="tab-content">
+            <div class="card">
+                <div class="card-header">External Nexus (Gemini/OpenAI)</div>
+                <div class="card-body">
+                    <div class="input-group mb-3">
+                        <select id="nexus-service" class="form-select" style="max-width: 150px;">
+                            <option value="gemini">Gemini</option>
+                        </select>
+                        <input type="text" id="nexus-prompt" class="form-control" placeholder="Query external brain...">
+                        <button class="btn btn-outline-primary" onclick="queryNexus()">Bridge Query</button>
+                    </div>
+                    <div id="nexus-result" class="p-2 border rounded small"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="health-footer">
+        <div class="health-item">CPU <span id="health-cpu">-%</span></div>
+        <div class="health-item">Swarm Tasks <span id="health-swarm">0</span></div>
+        <div class="health-item ms-auto text-success">Prob AI v4.1.0 Multitasking Alpha</div>
     </div>
 
     <script>
         function showTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
-            event.target.classList.add('active');
-        }
-
-        async function ask() {
-            const query = document.getElementById('query').value;
-            const res = await fetch('/api/ask', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({query})
-            });
-            const data = await res.json();
-            document.getElementById('results').innerText = data.result + "\n\nConfidence: " + data.honesty.confidence;
-            loadReview();
         }
 
         async function whatif() {
             const scenario = document.getElementById('query').value;
-            const res = await fetch('/api/whatif', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({scenario})
-            });
-            const data = await res.json();
-            document.getElementById('results').innerText = data.result + "\n\nConfidence: " + (data.honesty ? data.honesty.confidence : "N/A");
-            loadReview();
-        }
-
-        async function deepDive() {
-            const topic = document.getElementById('query').value;
-            document.getElementById('results').innerText = "Prob is performing a deep dive research on: " + topic + "... This may take a while.";
-            const res = await fetch('/api/deep-dive', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({topic})
-            });
+            const res = await fetch('/api/whatif', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({scenario}) });
             const data = await res.json();
             document.getElementById('results').innerText = data.result;
         }
 
-        function clearChat() {
-            document.getElementById('chat-box').innerHTML = '<div class="message ai-message">Chat cleared. How can I assist your discovery today?</div>';
+        async function spawnMission() {
+            const topic = document.getElementById('swarm-topic').value;
+            await fetch('/api/swarm/spawn', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({topic}) });
+            updateSwarm();
         }
 
-        async function sendChat() {
-            const input = document.getElementById('chat-input');
-            const chatBox = document.getElementById('chat-box');
-            if(!input.value) return;
-
-            const query = input.value;
-            chatBox.innerHTML += `<div class="message user-message">${query}</div>`;
-            input.value = '';
-
-            let endpoint = '/api/ask';
-            let body = {query};
-
-            // Detect special commands in chat
-            if (query.toLowerCase().startsWith('learn about ')) {
-                endpoint = '/api/learn';
-                body = {topic: query.substring(12)};
-                chatBox.innerHTML += `<div class="message ai-message italic">Prob is initiating an autonomous learning cycle for: ${body.topic}...</div>`;
-            } else if (query.toLowerCase().startsWith('rewrite ')) {
-                const parts = query.substring(8).split(' to ');
-                if (parts.length >= 2) {
-                    endpoint = '/api/self-modify';
-                    body = {filepath: parts[0].trim(), instruction: parts[1].trim()};
-                    chatBox.innerHTML += `<div class="message ai-message italic">Prob is analyzing its own code at ${body.filepath}...</div>`;
-                }
-            } else if (query.toLowerCase().startsWith('install ')) {
-                endpoint = '/api/install';
-                body = {package: query.substring(8).trim()};
-                chatBox.innerHTML += `<div class="message ai-message italic">Prob is downloading and installing ${body.package}...</div>`;
+        async function updateSwarm() {
+            const res = await fetch('/api/swarm/status');
+            const data = await res.json();
+            let html = "";
+            for (let id in data) {
+                const t = data[id];
+                html += `<div class="mb-2 p-2 border rounded"><strong>${t.topic}</strong> [${t.status}] - ${t.progress}%</div>`;
             }
+            document.getElementById('swarm-list').innerHTML = html;
+            document.getElementById('health-swarm').innerText = Object.keys(data).length;
+        }
 
-            const res = await fetch(endpoint, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(body)
-            });
+        async function runCritique() {
+            const finding = document.getElementById('critique-finding').value;
+            const res = await fetch('/api/critique', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({finding}) });
             const data = await res.json();
-            chatBox.innerHTML += `<div class="message ai-message">${data.result}</div>`;
-            chatBox.scrollTop = chatBox.scrollHeight;
+            document.getElementById('critique-result').innerText = data.critique;
         }
 
-        async function searchWeb() {
-            const query = document.getElementById('searchQuery').value;
-            const res = await fetch('/api/search', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({query})
-            });
+        async function runDebate() {
+            const finding = document.getElementById('critique-finding').value;
+            const res = await fetch('/api/critique/debate', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({finding}) });
             const data = await res.json();
-            let html = "<ul class='list-unstyled'>";
-            data.forEach(r => {
-                html += `<li class='mb-3'><a href="${r.href}" target="_blank" class="text-info">${r.title}</a><br><small class="text-secondary">${r.body}</small></li>`;
-            });
-            html += "</ul>";
-            document.getElementById('searchResults').innerHTML = html;
+            document.getElementById('critique-result').innerHTML = `PRO: ${data.pro}<br><br>CON: ${data.con}<br><br>SYNTHESIS: ${data.synthesis}`;
         }
 
-        async function downloadDataset() {
-            const dataset = document.getElementById('datasetName').value;
-            await fetch('/api/datasets', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({dataset})
-            });
-            loadDatasets();
-        }
-
-        async function loadDatasets() {
-            const res = await fetch('/api/datasets');
+        async function queryNexus() {
+            const service = document.getElementById('nexus-service').value;
+            const prompt = document.getElementById('nexus-prompt').value;
+            const res = await fetch('/api/nexus/query', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({service, prompt}) });
             const data = await res.json();
-            document.getElementById('localDatasets').innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            document.getElementById('nexus-result').innerText = data.result;
         }
 
-        async function writeAndExecute() {
-            const filename = document.getElementById('filename').value;
-            const code = document.getElementById('code-input').value;
-            const res = await fetch('/api/code/execute', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({filename, code}) // backend needs to handle code write too or we just use CLI style
-            });
-            const data = await res.json();
-            document.getElementById('code-output').innerText = data.stdout || data.error || data.stderr;
-        }
-
-        async function buildModel() {
-            const dataset = document.getElementById('buildDataset').value;
-            const useLora = document.getElementById('useLora').checked;
-            const res = await fetch('/api/models/build', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({dataset, useLora})
-            });
-            const data = await res.json();
-            document.getElementById('modelStatus').innerText = data.result;
-        }
-
-        async function generateChart() {
-            const rawData = document.getElementById('viz-data').value;
-            try {
-                const data = JSON.parse(rawData);
-                const res = await fetch('/api/viz/bar', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        data,
-                        x_label: "Categories",
-                        y_label: "Values",
-                        title: "Research Discovery Analytics"
-                    })
-                });
-                const result = await res.json();
-                // path is like prob/output/charts/filename.png
-                // we served /output/ from ../output
-                const relativePath = result.path.replace('prob/output/', '');
-                document.getElementById('chart-container').innerHTML = `<img src="/output/${relativePath}" class="img-fluid rounded border border-secondary shadow">`;
-            } catch(e) {
-                alert("Invalid JSON data for chart.");
-            }
-        }
-
-        async function loadRules() {
-            const res = await fetch('/api/rules');
-            const data = await res.json();
-            let html = "<ul>";
-            data.rules.forEach((r, i) => {
-                html += `<li>${r}</li>`;
-            });
-            html += "</ul>";
-            document.getElementById('rules').innerHTML = html;
-        }
-
-        async function addRule() {
-            const rule = document.getElementById('newRule').value;
-            await fetch('/api/rules', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({rule})
-            });
-            loadRules();
-        }
-
-        async function loadReview() {
-            const res = await fetch('/api/review');
-            const data = await res.json();
-            if(data.length > 0) {
-                document.getElementById('review-section').style.display = 'block';
-                let html = "";
-                data.forEach(e => {
-                    html += `<div class='mb-2 p-2 border border-warning rounded'><strong>${e.timestamp}</strong>: ${e.result.substring(0, 100)}... <button class='btn btn-sm btn-success' onclick="approve('${e.id}')">Approve</button></div>`;
-                });
-                document.getElementById('review-list').innerHTML = html;
-            } else {
-                document.getElementById('review-section').style.display = 'none';
-            }
-        }
-
-        async function approve(id) {
-            await fetch('/api/review', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({id})
-            });
-            loadReview();
-        }
-
-        // Drag and Drop
-        const dropZone = document.getElementById('drop-zone');
-        const fileInput = document.getElementById('file-upload');
-
-        dropZone.onclick = () => fileInput.click();
-
-        dropZone.ondragover = (e) => {
-            e.preventDefault();
-            dropZone.classList.add('border-primary');
-        };
-
-        dropZone.ondragleave = () => {
-            dropZone.classList.remove('border-primary');
-        };
-
-        dropZone.ondrop = (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('border-primary');
-            if (e.dataTransfer.files.length) {
-                handleUpload(e.dataTransfer.files[0]);
-            }
-        };
-
-        fileInput.onchange = (e) => {
-            if (fileInput.files.length) {
-                handleUpload(fileInput.files[0]);
-            }
-        };
-
-        async function handleUpload(file) {
-            const formData = new FormData();
-            formData.append('file', file);
-            document.getElementById('upload-progress').innerText = "Uploading " + file.name + "...";
-
-            const res = await fetch('/api/upload', {
-                method: 'POST',
-                body: formData
-            });
-            const data = await res.json();
-            document.getElementById('upload-progress').innerText = data.message || data.error;
-        }
-
-        async function startLearning() {
-            const topic = document.getElementById('learn-topic').value;
-            document.getElementById('learning-status').innerText = "Prob is initiating learning cycle for: " + topic;
-            const res = await fetch('/api/learn', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({topic})
-            });
-            const data = await res.json();
-            document.getElementById('learning-status').innerText = data.result;
-        }
-
-        async function selfRewrite() {
-            const filepath = document.getElementById('rewrite-file').value;
-            const instruction = document.getElementById('rewrite-instruction').value;
-            document.getElementById('rewrite-status').innerText = "Prob is analyzing itself...";
-
-            const res = await fetch('/api/self-modify', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({filepath, instruction})
-            });
-            const data = await res.json();
-            document.getElementById('rewrite-status').innerText = data.result || data.error;
-        }
-
-        loadRules();
-        loadDatasets();
-        loadReview();
+        setInterval(updateSwarm, 3000);
     </script>
 </body>
 </html>

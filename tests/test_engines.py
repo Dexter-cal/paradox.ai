@@ -1,6 +1,6 @@
 import unittest
-from prob.memory.engine import MemoryEngine
-from prob.engines.documentation import DocumentationEngine
+from prob.memory.memory_engine import MemoryEngine
+from prob.engines.doc_engine import DocumentationEngine
 from prob.engines.honesty import HonestyEngine
 import os
 

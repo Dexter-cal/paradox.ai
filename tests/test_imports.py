@@ -2,9 +2,9 @@ import unittest
 import os
 import shutil
 from prob.brain.model_selector import ModelSelector
-from prob.memory.engine import MemoryEngine
-from prob.engines.whatif import WhatIfEngine
-from prob.engines.guardrail import GuardrailEngine
+from prob.memory.memory_engine import MemoryEngine
+from prob.engines.what_if import WhatIfEngine
+from prob.engines.guardrail_engine import GuardrailEngine
 from prob.output.engine import OutputEngine
 
 class TestImports(unittest.TestCase):

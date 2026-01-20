@@ -1,7 +1,7 @@
 import os
 import json
 from datetime import datetime
-from prob.memory.engine import MemoryEngine
+from prob.memory.memory_engine import MemoryEngine
 
 class DocumentationEngine:
     def __init__(self, memory: MemoryEngine, output_dir="prob/output/docs"):

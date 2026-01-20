@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
-from prob.engines.whatif import WhatIfEngine
-from prob.memory.engine import MemoryEngine
+from prob.engines.what_if import WhatIfEngine
+from prob.memory.memory_engine import MemoryEngine
 import json
 import os
 

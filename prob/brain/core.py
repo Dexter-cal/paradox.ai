@@ -54,9 +54,13 @@ class ProbBrain:
 
         print(f"Model {self.model_details['name']} loaded successfully with optimizations: {self.selected_optimizations}")
 
-    def reason(self, prompt, max_new_tokens=500):
+    def reason(self, prompt, max_new_tokens=500, return_steps=False):
         if self.model is None:
             self.load()
+
+        # If return_steps is true, we try to force a structured thinking process
+        if return_steps:
+            prompt += "\nBreak down your reasoning into Step 1, Step 2, Step 3, etc. Conclusion:"
 
         inputs = self.tokenizer(prompt, return_tensors="pt").to(self.model.device)
         with torch.no_grad():
@@ -68,8 +72,16 @@ class ProbBrain:
                 top_p=0.9
             )
 
-        return self.tokenizer.decode(outputs[0], skip_special_tokens=True)
+        full_text = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
 
-    def what_if(self, scenario):
+        if return_steps:
+            # Simple heuristic to split steps
+            parts = full_text.split("Step ")
+            steps = [p.strip() for p in parts if p.strip()]
+            return {"full": full_text, "steps": steps}
+
+        return full_text
+
+    def what_if(self, scenario, structured=True):
         prompt = f"System: You are Prob, a what-if reasoning AI. Analyze the following scenario and its consequences.\nScenario: {scenario}\nAnalysis:"
-        return self.reason(prompt)
+        return self.reason(prompt, return_steps=structured)
