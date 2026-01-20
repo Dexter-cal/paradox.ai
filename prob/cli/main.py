@@ -11,18 +11,21 @@ from prob.engines.search import SearchEngine
 from prob.engines.data_library import DataLibraryEngine
 from prob.engines.coder import CoderEngine
 from prob.engines.model_factory import ModelFactoryEngine
+from prob.engines.self_trainer import SelfTrainerEngine
+from prob.engines.self_modifier import SelfModifierEngine
 from prob.output.engine import OutputEngine
 
 def main():
     parser = argparse.ArgumentParser(description="Prob AI - Autonomous Discovery Engine")
-    parser.add_argument("command", choices=["ask", "whatif", "rules", "notes", "report", "paper", "book", "search", "dataset", "code", "build_model"], help="Command to run")
+    parser.add_argument("command", choices=["ask", "whatif", "rules", "notes", "report", "paper", "book", "search", "dataset", "code", "build_model", "learn", "rewrite"], help="Command to run")
     parser.add_argument("--query", help="The question or scenario")
     parser.add_argument("--rule", help="Rule to add/remove")
     parser.add_argument("--index", type=int, help="Index of rule to remove")
-    parser.add_argument("--topic", help="Topic for the book")
+    parser.add_argument("--topic", help="Topic for the book or learning")
     parser.add_argument("--dataset", help="Dataset name on HF")
-    parser.add_argument("--filename", help="Filename for code")
+    parser.add_argument("--filename", help="Filename for code or rewrite")
     parser.add_argument("--code", help="Code to write")
+    parser.add_argument("--instruction", help="Instruction for self-modification")
 
     args = parser.parse_args()
 
@@ -136,7 +139,31 @@ def main():
         coder = CoderEngine()
         data_lib = DataLibraryEngine()
         factory = ModelFactoryEngine(coder, data_lib)
-        res = factory.design_and_build_model("Phi-3-mini", args.dataset)
+        res = factory.design_and_build_model("microsoft/Phi-3-mini-4k-instruct", args.dataset, use_lora=True)
+        print(res)
+
+    elif args.command == "learn":
+        if not args.topic:
+            print("Error: --topic is required for learn.")
+            sys.exit(1)
+        brain = ProbBrain()
+        search = SearchEngine()
+        data_lib = DataLibraryEngine()
+        coder = CoderEngine()
+        factory = ModelFactoryEngine(coder, data_lib)
+        trainer = SelfTrainerEngine(brain, search, data_lib, factory)
+        print(f"Starting autonomous learning for {args.topic}...")
+        res = trainer.autonomous_learning_cycle(args.topic)
+        print(res)
+
+    elif args.command == "rewrite":
+        if not args.filename or not args.instruction:
+            print("Error: --filename and --instruction are required for rewrite.")
+            sys.exit(1)
+        brain = ProbBrain()
+        modifier = SelfModifierEngine(brain)
+        print(f"Modifying {args.filename}...")
+        res = modifier.rewrite_logic(args.filename, args.instruction)
         print(res)
 
 if __name__ == "__main__":

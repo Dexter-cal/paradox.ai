@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_from_directory
+from werkzeug.utils import secure_filename
 from prob.brain.core import ProbBrain
 from prob.memory.engine import MemoryEngine
 from prob.engines.whatif import WhatIfEngine
@@ -11,10 +12,16 @@ from prob.engines.data_library import DataLibraryEngine
 from prob.engines.coder import CoderEngine
 from prob.engines.model_factory import ModelFactoryEngine
 from prob.engines.visualization import VisualizationEngine
+from prob.engines.self_trainer import SelfTrainerEngine
+from prob.engines.self_modifier import SelfModifierEngine
+from prob.engines.dependency import DependencyEngine
 from prob.output.engine import OutputEngine
 import os
 
 app = Flask(__name__)
+UPLOAD_FOLDER = 'prob/memory/data_library/uploads'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Lazy initialization
 brain = None
@@ -29,12 +36,17 @@ data_lib = DataLibraryEngine()
 coder = CoderEngine()
 factory = ModelFactoryEngine(coder, data_lib)
 viz_engine = VisualizationEngine()
+dep_engine = DependencyEngine()
 
 def get_brain():
     global brain
     if brain is None:
         brain = ProbBrain()
     return brain
+
+# Initialize engines that need brain
+trainer_engine = SelfTrainerEngine(get_brain(), search_engine, data_lib, factory)
+modifier_engine = SelfModifierEngine(get_brain())
 
 @app.route('/')
 def index():
@@ -91,10 +103,26 @@ def datasets():
         return jsonify({"result": res})
     return jsonify(data_lib.list_local_datasets())
 
+@app.route('/api/upload', methods=['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        return jsonify({"error": "No file part"}), 400
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
+    if file:
+        filename = secure_filename(file.filename)
+        path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(path)
+        return jsonify({"message": f"File {filename} uploaded successfully to {path}", "filename": filename})
+
 @app.route('/api/code/execute', methods=['POST'])
 def execute_code():
     data = request.json
     filename = data.get('filename')
+    code = data.get('code')
+    if code:
+        coder.write_code(filename, code)
     res = coder.execute_code(filename)
     return jsonify(res)
 
@@ -118,6 +146,39 @@ def build_model():
         use_lora=data.get('useLora', False)
     )
     return jsonify({"result": res})
+
+@app.route('/api/learn', methods=['POST'])
+def learn():
+    data = request.json
+    topic = data.get('topic')
+    res = trainer_engine.autonomous_learning_cycle(topic)
+    return jsonify({"result": res})
+
+@app.route('/api/self-modify', methods=['POST'])
+def self_modify():
+    data = request.json
+    filepath = data.get('filepath')
+    instruction = data.get('instruction')
+    res = modifier_engine.rewrite_logic(filepath, instruction)
+    return jsonify({"result": res})
+
+@app.route('/api/install', methods=['POST'])
+def install():
+    data = request.json
+    package = data.get('package')
+    res = dep_engine.install_package(package)
+    return jsonify({"result": res})
+
+@app.route('/api/deep-dive', methods=['POST'])
+def deep_dive():
+    data = request.json
+    topic = data.get('topic')
+    search_res = search_engine.search(topic)
+    context = search_engine.format_results(search_res)
+    prompt = f"Topic: {topic}\nContext from Web: {context}\nTask: Perform a deep dive analysis on this topic. Identify gaps in current knowledge and suggest novel hypotheses."
+    analysis = get_brain().reason(prompt)
+    memory.log_action("deep_dive", {"topic": topic, "result": analysis})
+    return jsonify({"result": analysis})
 
 @app.route('/api/review', methods=['GET', 'POST'])
 def handle_review():
