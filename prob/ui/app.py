@@ -6,6 +6,10 @@ from prob.engines.guardrail import GuardrailEngine
 from prob.engines.documentation import DocumentationEngine
 from prob.engines.honesty import HonestyEngine
 from prob.engines.human_review import HumanReviewEngine
+from prob.engines.search import SearchEngine
+from prob.engines.data_library import DataLibraryEngine
+from prob.engines.coder import CoderEngine
+from prob.engines.model_factory import ModelFactoryEngine
 from prob.output.engine import OutputEngine
 import os
 
@@ -19,6 +23,10 @@ output = OutputEngine()
 doc_engine = DocumentationEngine(memory)
 honesty = HonestyEngine()
 review_engine = HumanReviewEngine()
+search_engine = SearchEngine()
+data_lib = DataLibraryEngine()
+coder = CoderEngine()
+factory = ModelFactoryEngine(coder, data_lib)
 
 def get_brain():
     global brain
@@ -61,6 +69,34 @@ def generate_paper():
 @app.route('/api/notes', methods=['GET'])
 def get_notes():
     return jsonify(memory.get_all_notes())
+
+@app.route('/api/search', methods=['POST'])
+def search():
+    data = request.json
+    query = data.get('query')
+    results = search_engine.search(query)
+    return jsonify(results)
+
+@app.route('/api/datasets', methods=['GET', 'POST'])
+def datasets():
+    if request.method == 'POST':
+        data = request.json
+        res = data_lib.download_dataset(data.get('dataset'))
+        return jsonify({"result": res})
+    return jsonify(data_lib.list_local_datasets())
+
+@app.route('/api/code/execute', methods=['POST'])
+def execute_code():
+    data = request.json
+    filename = data.get('filename')
+    res = coder.execute_code(filename)
+    return jsonify(res)
+
+@app.route('/api/models/build', methods=['POST'])
+def build_model():
+    data = request.json
+    res = factory.design_and_build_model("Phi-3-mini", data.get('dataset'))
+    return jsonify({"result": res})
 
 @app.route('/api/review', methods=['GET', 'POST'])
 def handle_review():

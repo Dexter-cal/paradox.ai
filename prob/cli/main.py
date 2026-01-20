@@ -1,20 +1,28 @@
 import argparse
 import sys
+import json
 from prob.brain.core import ProbBrain
 from prob.memory.engine import MemoryEngine
 from prob.engines.whatif import WhatIfEngine
 from prob.engines.guardrail import GuardrailEngine
 from prob.engines.documentation import DocumentationEngine
 from prob.engines.honesty import HonestyEngine
+from prob.engines.search import SearchEngine
+from prob.engines.data_library import DataLibraryEngine
+from prob.engines.coder import CoderEngine
+from prob.engines.model_factory import ModelFactoryEngine
 from prob.output.engine import OutputEngine
 
 def main():
     parser = argparse.ArgumentParser(description="Prob AI - Autonomous Discovery Engine")
-    parser.add_argument("command", choices=["ask", "whatif", "rules", "notes", "report", "paper", "book"], help="Command to run")
+    parser.add_argument("command", choices=["ask", "whatif", "rules", "notes", "report", "paper", "book", "search", "dataset", "code", "build_model"], help="Command to run")
     parser.add_argument("--query", help="The question or scenario")
     parser.add_argument("--rule", help="Rule to add/remove")
     parser.add_argument("--index", type=int, help="Index of rule to remove")
     parser.add_argument("--topic", help="Topic for the book")
+    parser.add_argument("--dataset", help="Dataset name on HF")
+    parser.add_argument("--filename", help="Filename for code")
+    parser.add_argument("--code", help="Code to write")
 
     args = parser.parse_args()
 
@@ -93,6 +101,43 @@ def main():
         topic = args.topic or "General Discovery"
         path = doc_engine.generate_book(topic)
         print(f"The Book of Prob generated at: {path}")
+
+    elif args.command == "search":
+        if not args.query:
+            print("Error: --query is required for search.")
+            sys.exit(1)
+        search_engine = SearchEngine()
+        results = search_engine.search(args.query)
+        print(search_engine.format_results(results))
+
+    elif args.command == "dataset":
+        data_lib = DataLibraryEngine()
+        if args.dataset:
+            res = data_lib.download_dataset(args.dataset)
+            print(res)
+        else:
+            print("Local Dataset Library:")
+            print(json.dumps(data_lib.list_local_datasets(), indent=2))
+
+    elif args.command == "code":
+        coder = CoderEngine()
+        if args.code and args.filename:
+            path = coder.write_code(args.filename, args.code)
+            print(f"Code written to {path}")
+        elif args.filename:
+            print(f"Executing {args.filename}...")
+            res = coder.execute_code(args.filename)
+            print(json.dumps(res, indent=2))
+
+    elif args.command == "build_model":
+        if not args.dataset:
+            print("Error: --dataset is required for build_model.")
+            sys.exit(1)
+        coder = CoderEngine()
+        data_lib = DataLibraryEngine()
+        factory = ModelFactoryEngine(coder, data_lib)
+        res = factory.design_and_build_model("Phi-3-mini", args.dataset)
+        print(res)
 
 if __name__ == "__main__":
     main()
