@@ -6,3 +6,8 @@ accelerate
 psutil
 flask
 requests
+duckduckgo-search
+datasets
+pandas
+pyarrow
+matplotlib

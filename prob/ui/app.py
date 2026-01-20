@@ -10,6 +10,7 @@ from prob.engines.search import SearchEngine
 from prob.engines.data_library import DataLibraryEngine
 from prob.engines.coder import CoderEngine
 from prob.engines.model_factory import ModelFactoryEngine
+from prob.engines.visualization import VisualizationEngine
 from prob.output.engine import OutputEngine
 import os
 
@@ -27,6 +28,7 @@ search_engine = SearchEngine()
 data_lib = DataLibraryEngine()
 coder = CoderEngine()
 factory = ModelFactoryEngine(coder, data_lib)
+viz_engine = VisualizationEngine()
 
 def get_brain():
     global brain
@@ -37,6 +39,10 @@ def get_brain():
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/output/<path:filename>')
+def serve_output(filename):
+    return send_from_directory('../output', filename)
 
 @app.route('/api/ask', methods=['POST'])
 def ask():
@@ -92,10 +98,25 @@ def execute_code():
     res = coder.execute_code(filename)
     return jsonify(res)
 
+@app.route('/api/viz/bar', methods=['POST'])
+def viz_bar():
+    data = request.json
+    path = viz_engine.generate_bar_chart(
+        data.get('data'),
+        data.get('x_label'),
+        data.get('y_label'),
+        data.get('title')
+    )
+    return jsonify({"path": path})
+
 @app.route('/api/models/build', methods=['POST'])
 def build_model():
     data = request.json
-    res = factory.design_and_build_model("Phi-3-mini", data.get('dataset'))
+    res = factory.design_and_build_model(
+        "microsoft/Phi-3-mini-4k-instruct",
+        data.get('dataset'),
+        use_lora=data.get('useLora', False)
+    )
     return jsonify({"result": res})
 
 @app.route('/api/review', methods=['GET', 'POST'])

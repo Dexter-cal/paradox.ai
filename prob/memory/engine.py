@@ -20,26 +20,29 @@ class MemoryEngine:
                 with open(path, "w") as f:
                     json.dump([], f)
 
-    def log_action(self, action, details):
+    def log_action(self, action, details, project="default"):
         entry = {
             "timestamp": datetime.now().isoformat(),
+            "project": project,
             "action": action,
             "details": details
         }
         self._append_to_json(self.notebook_path, entry)
 
-    def log_failure(self, task, reason, context):
+    def log_failure(self, task, reason, context, project="default"):
         entry = {
             "timestamp": datetime.now().isoformat(),
+            "project": project,
             "task": task,
             "reason": reason,
             "context": context
         }
         self._append_to_json(self.failures_path, entry)
 
-    def log_discovery(self, discovery, evidence):
+    def log_discovery(self, discovery, evidence, project="default"):
         entry = {
             "timestamp": datetime.now().isoformat(),
+            "project": project,
             "discovery": discovery,
             "evidence": evidence
         }
