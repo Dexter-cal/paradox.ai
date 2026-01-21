@@ -3,35 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prob AI | V5 Neural Discovery</title>
+    <title>Prob AI | V6 Neural Nexus</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --sidebar-width: 240px; --bg-main: #0d1117; --bg-card: #161b22; --border-color: #30363d; --accent: #58a6ff; --thought-bg: #1c2128; }
-        body { background-color: var(--bg-main); color: #c9d1d9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; }
+        :root { --sidebar-width: 240px; --bg-main: #0b0e14; --bg-card: #151921; --border-color: #2d333b; --accent: #4493f8; --thought-bg: #1c2128; --dream-purple: #8957e5; }
+        body { background-color: var(--bg-main); color: #adbac7; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; margin: 0; }
         .sidebar { background-color: var(--bg-card); min-height: 100vh; padding: 20px; border-right: 1px solid var(--border-color); position: fixed; width: var(--sidebar-width); }
         .main-content { margin-left: var(--sidebar-width); padding: 20px; display: flex; gap: 20px; }
-        .thought-stream { width: 350px; background: var(--thought-bg); border-radius: 8px; border: 1px solid var(--border-color); height: calc(100vh - 40px); display: flex; flex-column: column; overflow: hidden; position: fixed; right: 20px; }
-        .thought-header { padding: 10px; border-bottom: 1px solid var(--border-color); background: #21262d; font-weight: bold; font-size: 0.8rem; text-transform: uppercase; }
-        .thought-body { flex: 1; overflow-y: auto; padding: 15px; font-family: 'Courier New', Courier, monospace; font-size: 0.75rem; }
-        .nav-link { color: #8b949e; margin-bottom: 8px; cursor: pointer; display: flex; align-items: center; padding: 10px; border-radius: 6px; }
-        .nav-link.active { color: var(--accent); background: #21262d; }
-        .card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 20px; }
+        .thought-stream { width: 350px; background: var(--thought-bg); border-radius: 8px; border: 1px solid var(--border-color); height: calc(100vh - 40px); display: flex; flex-direction: column; overflow: hidden; position: fixed; right: 20px; }
+        .thought-header { padding: 10px; border-bottom: 1px solid var(--border-color); background: #22272e; font-weight: bold; font-size: 0.75rem; text-transform: uppercase; color: #768390; }
+        .thought-body { flex: 1; overflow-y: auto; padding: 15px; font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; font-size: 0.7rem; line-height: 1.4; }
+        .nav-link { color: #768390; margin-bottom: 8px; cursor: pointer; display: flex; align-items: center; padding: 10px; border-radius: 6px; text-decoration: none !important; }
+        .nav-link:hover { color: #adbac7; background: #22272e; }
+        .nav-link.active { color: var(--accent); background: #22272e; border-left: 3px solid var(--accent); }
+        .card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        .card-header { border-bottom: 1px solid var(--border-color); background: transparent; color: #adbac7; font-weight: 600; font-size: 0.9rem; }
         .tab-content { display: none; width: calc(100% - 370px); }
         .tab-content.active { display: block; }
-        .duel-badge { font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; }
-        .inquisitor { background: #d29922; color: black; }
-        .solver { background: #238636; color: white; }
+        .dream-card { border-left: 4px solid var(--dream-purple); background: #1a1526; }
+        .frontier-badge { background: #347d39; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; }
+        .btn-glow-purple { background: var(--dream-purple); border: none; color: white; box-shadow: 0 0 10px rgba(137,87,229,0.4); }
+        .btn-glow-purple:hover { background: #9666f2; box-shadow: 0 0 20px rgba(137,87,229,0.6); }
     </style>
 </head>
 <body>
     <div class="sidebar">
-        <h4 class="mb-4"><i class="fas fa-brain text-primary"></i> Prob AI <small class="text-muted" style="font-size: 0.5rem;">V5</small></h4>
+        <div class="d-flex align-items-center mb-4 ps-2">
+            <i class="fas fa-project-diagram fa-lg text-primary me-2"></i>
+            <h5 class="mb-0 text-white">Prob <span class="text-accent">Nexus</span></h5>
+        </div>
         <nav class="nav flex-column">
-            <a class="nav-link active" onclick="showTab('research')"><i class="fas fa-search me-2"></i>Research Hub</a>
-            <a class="nav-link" onclick="showTab('duel')"><i class="fas fa-swords me-2"></i>Curiosity Duel</a>
-            <a class="nav-link" onclick="showTab('adv')"><i class="fas fa-microchip me-2"></i>Advanced Dev</a>
-            <a class="nav-link" onclick="showTab('api')"><i class="fas fa-network-wired me-2"></i>External Nexus</a>
+            <a class="nav-link active" onclick="showTab('research')"><i class="fas fa-microscope me-2"></i>Discovery Hub</a>
+            <a class="nav-link" onclick="showTab('dreams')"><i class="fas fa-moon me-2"></i>Dream Stream</a>
+            <a class="nav-link" onclick="showTab('frontier')"><i class="fas fa-compass me-2"></i>Frontiers</a>
+            <a class="nav-link" onclick="showTab('backcast')"><i class="fas fa-history me-2"></i>Backcasting</a>
+            <a class="nav-link" onclick="showTab('meta')"><i class="fas fa-dna me-2"></i>Recursive AI</a>
+            <a class="nav-link" onclick="showTab('duel')"><i class="fas fa-bolt me-2"></i>Neural Combat</a>
         </nav>
     </div>
 
@@ -39,51 +47,81 @@
         <!-- Research Hub -->
         <div id="research" class="tab-content active">
             <div class="card">
-                <div class="card-header">Main Reasoning Hub</div>
                 <div class="card-body">
-                    <textarea id="query" class="form-control mb-3 bg-dark text-white" rows="4" placeholder="Enter research query..."></textarea>
-                    <button class="btn btn-primary w-100" onclick="ask()">Execute Discovery</button>
+                    <textarea id="query" class="form-control mb-3 bg-dark text-white border-secondary" rows="4" placeholder="Inject research inquiry..."></textarea>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary flex-grow-1" onclick="ask()">Execute Discovery</button>
+                        <button class="btn btn-outline-info" title="Map Frontiers" onclick="quickFrontier()"><i class="fas fa-map"></i></button>
+                    </div>
                 </div>
             </div>
-            <div id="results" class="card p-3 font-monospace small">Ready for input...</div>
+            <div id="results" class="card p-3 font-monospace small" style="min-height: 200px;">Awaiting signal...</div>
         </div>
 
-        <!-- Curiosity Duel -->
+        <!-- Dream Stream -->
+        <div id="dreams" class="tab-content">
+            <h5 class="mb-3 text-white"><i class="fas fa-moon text-purple me-2"></i>Combinatorial Innovation (Idle Dreams)</h5>
+            <div id="dream-list"></div>
+            <div class="text-center mt-4">
+                <small class="text-muted italic">Prob dreams when idle, bridging disconnected findings from its history.</small>
+            </div>
+        </div>
+
+        <!-- Frontier -->
+        <div id="frontier" class="tab-content">
+            <div class="card">
+                <div class="card-header">Map the Ignorance</div>
+                <div class="card-body">
+                    <input type="text" id="frontier-topic" class="form-control mb-3 bg-dark text-white border-secondary" placeholder="Topic to explore unknowns (e.g. Neutrino Oscillations)">
+                    <button class="btn btn-success w-100" onclick="getFrontier()">Identify The Unknown</button>
+                    <div id="frontier-result" class="mt-3 p-3 bg-black rounded border border-success small font-monospace"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meta -->
+        <div id="meta" class="tab-content">
+            <div class="card">
+                <div class="card-header">Prompt Self-Optimization</div>
+                <div class="card-body">
+                    <p class="small">Recursive optimization analyzes recent failures and rewrites Prob's system logic.</p>
+                    <textarea id="current-instr" class="form-control mb-3 bg-dark text-white border-secondary" rows="3">You are Prob, an autonomous discovery engine...</textarea>
+                    <button class="btn btn-glow-purple w-100" onclick="optimize()">Recursively Optimize Instruction</button>
+                    <div id="meta-result" class="mt-3 p-2 bg-black rounded small italic text-info"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Backcast -->
+        <div id="backcast" class="tab-content">
+            <div class="card">
+                <div class="card-header">Target Future Outcomes</div>
+                <div class="card-body">
+                    <input type="text" id="backcast-outcome" class="form-control mb-2 bg-dark text-white border-secondary" placeholder="Outcome (e.g. Dyson Swarm Component)">
+                    <input type="number" id="backcast-year" class="form-control mb-3 bg-dark text-white border-secondary" value="2045">
+                    <button class="btn btn-primary w-100" onclick="runBackcast()">Generate Reverse Roadmap</button>
+                    <div id="backcast-result" class="mt-3 p-3 bg-black rounded small font-monospace" style="white-space:pre-wrap;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Duel (Legacy kept) -->
         <div id="duel" class="tab-content">
             <div class="card">
-                <div class="card-header">Inquisitor vs Solver Duel</div>
                 <div class="card-body">
-                    <input type="text" id="duel-topic" class="form-control mb-3 bg-dark text-white" placeholder="Target Topic (e.g. Dark Matter)">
-                    <button class="btn btn-success w-100" onclick="runDuel()">Initiate Neural Combat</button>
-                    <hr>
-                    <div id="duel-scores" class="d-flex justify-content-around mb-3">
-                        <div class="text-center"><span class="duel-badge inquisitor">INQUISITOR</span><br><h3 id="score-inq">0</h3></div>
-                        <div class="text-center"><span class="duel-badge solver">SOLVER</span><br><h3 id="score-sol">0</h3></div>
+                    <input type="text" id="duel-topic" class="form-control mb-3 bg-dark text-white" placeholder="Neural Combat Topic">
+                    <button class="btn btn-danger w-100" onclick="runDuel()">Initiate Curiosity Duel</button>
+                    <div id="duel-scores" class="d-flex justify-content-around mt-3">
+                        <div class="text-center">INQ: <span id="score-inq">0</span></div>
+                        <div class="text-center">SOL: <span id="score-sol">0</span></div>
                     </div>
-                    <div id="duel-result" class="small p-2 border rounded"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Advanced Dev -->
-        <div id="adv" class="tab-content">
-            <div class="card">
-                <div class="card-header">Discovery Post-Processing</div>
-                <div class="card-body">
-                    <textarea id="adv-input" class="form-control mb-3 bg-dark text-white" rows="3" placeholder="Paste discovery for processing..."></textarea>
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-warning btn-sm" onclick="checkParadox()">Detect Paradox</button>
-                        <button class="btn btn-info btn-sm" onclick="forecast()">Forecast Impact</button>
-                        <button class="btn btn-success btn-sm" onclick="designExperiment()">Design Experiment</button>
-                    </div>
-                    <div id="adv-result" class="mt-3 small p-2 bg-black rounded"></div>
                 </div>
             </div>
         </div>
 
         <!-- Thought Stream Sidebar -->
         <div class="thought-stream">
-            <div class="thought-header"><i class="fas fa-stream me-2"></i>Live Neural Trace</div>
+            <div class="thought-header"><i class="fas fa-wave-square me-2"></i>Live Neural Trace</div>
             <div class="thought-body" id="thought-log"></div>
         </div>
     </div>
@@ -94,6 +132,7 @@
             document.getElementById(id).classList.add('active');
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             event.target.closest('.nav-link').classList.add('active');
+            if(id === 'dreams') updateDreams();
         }
 
         async function ask() {
@@ -103,34 +142,52 @@
             document.getElementById('results').innerText = data.result;
         }
 
+        async function updateDreams() {
+            const res = await fetch('/api/meta/dreams');
+            const data = await res.json();
+            let html = "";
+            data.reverse().forEach(d => {
+                html += `<div class="card dream-card p-3 mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="frontier-badge" style="background:#8957e5;">DREAM_SYNTHESIS</span>
+                        <small class="text-muted">${new Date(d.timestamp*1000).toLocaleTimeString()}</small>
+                    </div>
+                    <div class="small text-accent mb-2">Bridge: ${d.source_a} + ${d.source_b}</div>
+                    <div class="small font-monospace">${d.synthesis}</div>
+                </div>`;
+            });
+            document.getElementById('dream-list').innerHTML = html || "<div class='text-center mt-5'>Prob is waiting for more discoveries to begin dreaming...</div>";
+        }
+
+        async function getFrontier() {
+            const topic = document.getElementById('frontier-topic').value;
+            const res = await fetch('/api/meta/frontier', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({topic}) });
+            const data = await res.json();
+            document.getElementById('frontier-result').innerText = data.result;
+        }
+
+        async function optimize() {
+            const instr = document.getElementById('current-instr').value;
+            const res = await fetch('/api/meta/optimize', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({instruction: instr}) });
+            const data = await res.json();
+            document.getElementById('meta-result').innerText = "Recursion complete. New instruction generated.";
+            document.getElementById('current-instr').value = data.new_instruction;
+        }
+
+        async function runBackcast() {
+            const outcome = document.getElementById('backcast-outcome').value;
+            const year = document.getElementById('backcast-year').value;
+            const res = await fetch('/api/meta/backcast', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({outcome, year}) });
+            const data = await res.json();
+            document.getElementById('backcast-result').innerText = data.roadmap;
+        }
+
         async function runDuel() {
             const topic = document.getElementById('duel-topic').value;
             const res = await fetch('/api/duel/run', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({topic}) });
             const data = await res.json();
             document.getElementById('score-inq').innerText = data.scores.inquisitor;
             document.getElementById('score-sol').innerText = data.scores.solver;
-            document.getElementById('duel-result').innerHTML = `<strong>Q:</strong> ${data.questions}<br><br><strong>A:</strong> ${data.answer}`;
-        }
-
-        async function checkParadox() {
-            const disc = document.getElementById('adv-input').value;
-            const res = await fetch('/api/adv/paradox', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({discovery: disc}) });
-            const data = await res.json();
-            document.getElementById('adv-result').innerText = data.result;
-        }
-
-        async function designExperiment() {
-            const disc = document.getElementById('adv-input').value;
-            const res = await fetch('/api/adv/experiment', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({discovery: disc}) });
-            const data = await res.json();
-            document.getElementById('adv-result').innerHTML = `<strong>EXPERIMENTAL PROTOCOL:</strong><br>${data.protocol}<br><br><strong>REAL-WORLD EXAMPLE:</strong><br>${data.example}`;
-        }
-
-        async function forecast() {
-            const disc = document.getElementById('adv-input').value;
-            const res = await fetch('/api/adv/forecast', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({discovery: disc}) });
-            const data = await res.json();
-            document.getElementById('adv-result').innerText = data.result;
         }
 
         async function pollThoughts() {
@@ -138,9 +195,10 @@
             const data = await res.json();
             let html = "";
             data.forEach(t => {
-                const color = t.agent === 'inquisitor' ? '#d29922' : t.agent === 'solver' ? '#238636' : '#58a6ff';
-                html += `<div style="margin-bottom:8px; border-left: 2px solid ${color}; padding-left: 8px;">
-                    <span style="color:${color}; font-weight:bold;">[${t.agent.toUpperCase()}]</span> ${t.msg}
+                const color = t.agent === 'inquisitor' ? '#d29922' : t.agent === 'solver' ? '#238636' : t.agent === 'experimentalist' ? '#347d39' : '#4493f8';
+                html += `<div style="margin-bottom:10px; border-left: 2px solid ${color}; padding-left: 10px; opacity: 0.9;">
+                    <div style="color:${color}; font-weight:bold; font-size: 0.6rem; letter-spacing: 1px;">${t.agent.toUpperCase()}</div>
+                    <div style="margin-top:2px;">${t.msg}</div>
                 </div>`;
             });
             document.getElementById('thought-log').innerHTML = html;

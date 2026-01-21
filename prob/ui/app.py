@@ -24,6 +24,10 @@ from prob.engines.external_nexus import ExternalNexus
 from prob.engines.curiosity_duel import CuriosityDuel
 from prob.engines.adv_dev import AdvancedDevFeatures
 from prob.engines.experimentalist import ExperimentalistEngine
+from prob.engines.dream_engine import DreamEngine
+from prob.engines.auto_tuner import AutoTuner
+from prob.engines.epistemic_map import EpistemicIgnoranceMap
+from prob.engines.backcaster import BackcasterEngine
 
 app = Flask(__name__)
 
@@ -50,6 +54,13 @@ nexus = ExternalNexus(brain)
 duel = CuriosityDuel(brain, memory)
 adv = AdvancedDevFeatures(brain, memory)
 experimentalist = ExperimentalistEngine(brain)
+dreamer = DreamEngine(brain, memory)
+tuner = AutoTuner(brain)
+frontier = EpistemicIgnoranceMap(brain, memory)
+backcaster = BackcasterEngine(brain)
+
+# Start Dreaming
+dreamer.start_dream_cycle()
 
 # Real-time Thought Stream
 thought_buffer = []
@@ -94,6 +105,29 @@ def design_experiment():
     res = experimentalist.design_experiment(discovery)
     example = experimentalist.provide_real_world_example(discovery)
     return jsonify({"protocol": res, "example": example})
+
+@app.route('/api/meta/dreams')
+def get_dreams():
+    return jsonify(dreamer.get_dreams())
+
+@app.route('/api/meta/frontier', methods=['POST'])
+def get_frontier():
+    topic = request.json.get('topic')
+    res = frontier.identify_boundary(topic)
+    return jsonify({"result": res})
+
+@app.route('/api/meta/optimize', methods=['POST'])
+def optimize_brain():
+    instr = request.json.get('instruction')
+    res = tuner.optimize_system_instruction(instr)
+    return jsonify({"new_instruction": res})
+
+@app.route('/api/meta/backcast', methods=['POST'])
+def run_backcast():
+    outcome = request.json.get('outcome')
+    year = request.json.get('year', 2040)
+    res = backcaster.generate_roadmap(outcome, year)
+    return jsonify({"roadmap": res})
 
 @app.route('/api/ask', methods=['POST'])
 def ask():
