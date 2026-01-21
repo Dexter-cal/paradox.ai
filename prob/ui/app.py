@@ -28,6 +28,7 @@ from prob.engines.dream_engine import DreamEngine
 from prob.engines.auto_tuner import AutoTuner
 from prob.engines.epistemic_map import EpistemicIgnoranceMap
 from prob.engines.backcaster import BackcasterEngine
+from prob.brain.bootstrap import BootstrapManager
 from prob.engines.red_team_adversary import RedTeamAdversary
 from prob.engines.future_historian import FutureHistorian
 from prob.engines.ip_nexus import IPNexus
@@ -72,6 +73,21 @@ council = CouncilOfConsensus(brain)
 serendipity = SerendipityInjector(brain)
 axiom_distiller = AxiomDistiller(brain)
 architect = NeuralArchitect(brain, memory)
+
+# Bootstrap Logic
+def start_autonomous_mission():
+    add_thought("system", "BOOTSTRAP_COMPLETE: Launching global discovery loop.")
+    # Here we could call the script or just start a thread that runs trainer.run_autonomous_cycle in a loop
+    def loop():
+        topics = ["Sub-quantum biology", "Non-euclidean cryptography", "Post-scarcity economics"]
+        while True:
+            for t in topics:
+                add_thought("system", f"Autonomous Mission: Researching {t}")
+                trainer.run_autonomous_cycle(t)
+                time.sleep(300)
+    threading.Thread(target=loop, daemon=True).start()
+
+boot_manager = BootstrapManager(brain, start_autonomous_mission)
 
 # Start Dreaming
 dreamer.start_dream_cycle()
@@ -185,6 +201,15 @@ def run_distill():
 def run_architect():
     res = architect.propose_correction_plan()
     return jsonify({"plan": res})
+
+@app.route('/api/brain/bootstrap', methods=['POST'])
+def bootstrap_brain():
+    boot_manager.start_bootstrap()
+    return jsonify({"status": "initiated"})
+
+@app.route('/api/brain/status')
+def get_boot_status():
+    return jsonify(boot_manager.get_status())
 
 @app.route('/api/ask', methods=['POST'])
 def ask():
