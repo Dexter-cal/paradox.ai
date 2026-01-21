@@ -4,6 +4,7 @@ import os
 import subprocess
 from prob.brain.downloader import ModelDownloader
 from prob.brain.model_selector import ModelSelector
+from prob.engines.dependency_manager import DependencyManager
 
 class BootstrapManager:
     def __init__(self, brain_core, autonomous_loop_func):
@@ -11,6 +12,7 @@ class BootstrapManager:
         self.autonomous_loop_func = autonomous_loop_func
         self.downloader = ModelDownloader()
         self.selector = ModelSelector()
+        self.dep_manager = DependencyManager()
         self.status = "idle"
         self.progress = 0
         self.error = None
@@ -26,7 +28,12 @@ class BootstrapManager:
     def _run_sequence(self):
         try:
             self.status = "in_progress"
-            self.progress = 10
+            self.progress = 5
+
+            # 0. Check Dependencies
+            print("[BOOTSTRAP] Checking system dependencies...")
+            self.dep_manager.check_and_install_all()
+            self.progress = 15
 
             # 1. Select Model
             model_name, _, _ = self.selector.recommend_model()

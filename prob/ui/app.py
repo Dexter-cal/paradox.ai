@@ -29,6 +29,7 @@ from prob.engines.auto_tuner import AutoTuner
 from prob.engines.epistemic_map import EpistemicIgnoranceMap
 from prob.engines.backcaster import BackcasterEngine
 from prob.brain.bootstrap import BootstrapManager
+from prob.engines.self_repair import SelfRepairEngine
 from prob.engines.red_team_adversary import RedTeamAdversary
 from prob.engines.future_historian import FutureHistorian
 from prob.engines.ip_nexus import IPNexus
@@ -88,6 +89,7 @@ def start_autonomous_mission():
     threading.Thread(target=loop, daemon=True).start()
 
 boot_manager = BootstrapManager(brain, start_autonomous_mission)
+repair_engine = SelfRepairEngine(brain, memory)
 
 # Start Dreaming
 dreamer.start_dream_cycle()
@@ -210,6 +212,15 @@ def bootstrap_brain():
 @app.route('/api/brain/status')
 def get_boot_status():
     return jsonify(boot_manager.get_status())
+
+@app.route('/api/system/repair', methods=['POST'])
+def run_repair():
+    res = repair_engine.scan_and_fix()
+    return jsonify({"repairs": res})
+
+@app.route('/api/system/dependencies')
+def get_deps():
+    return jsonify(boot_manager.dep_manager.get_status())
 
 @app.route('/api/ask', methods=['POST'])
 def ask():
