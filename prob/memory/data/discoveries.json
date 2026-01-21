@@ -12,5 +12,12 @@
     "query": "What if human civilization discovered a way to transmit high-voltage electricity wirelessly using the nitrogen in Earth's atmosphere as a semi-conductive medium?",
     "result": "The nitrogen-based wireless power grid (NBWP) utilizes localized ionization fields...",
     "sensitive": false
+  },
+  {
+    "id": "e93af46a",
+    "timestamp": "2026-01-21T07:53:02.095629",
+    "query": "Duel: Quantum Gravity",
+    "result": "Q: Question: Is gravity a result of quantum entanglement?\nA: Question: Is gravity a result of quantum entanglement?\nAnswer: Entanglement-based gravity models suggest spacetime curvature emerges from entanglement entropy (ER=EPR).\nScores: {'inquisitor': 15, 'solver': 0}",
+    "sensitive": false
   }
 ]

@@ -3,172 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prob AI | Advanced Discovery Suite</title>
+    <title>Prob AI | V5 Neural Discovery</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --sidebar-width: 240px; --bg-main: #0d1117; --bg-card: #161b22; --border-color: #30363d; --text-muted: #8b949e; --text-main: #c9d1d9; --accent: #58a6ff; }
-        body { background-color: var(--bg-main); color: var(--text-main); font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; margin: 0; }
+        :root { --sidebar-width: 240px; --bg-main: #0d1117; --bg-card: #161b22; --border-color: #30363d; --accent: #58a6ff; --thought-bg: #1c2128; }
+        body { background-color: var(--bg-main); color: #c9d1d9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; }
         .sidebar { background-color: var(--bg-card); min-height: 100vh; padding: 20px; border-right: 1px solid var(--border-color); position: fixed; width: var(--sidebar-width); }
-        .main-content { margin-left: var(--sidebar-width); padding: 20px; padding-bottom: 60px; }
-        .nav-link { color: var(--text-muted); margin-bottom: 8px; transition: color 0.2s; cursor: pointer; display: flex; align-items: center; border-radius: 6px; padding: 10px; text-decoration: none !important; }
-        .nav-link:hover, .nav-link.active { color: var(--accent); background: #21262d; }
-        .nav-link i { width: 24px; margin-right: 12px; font-size: 1.1rem; }
-        .card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 6px; margin-bottom: 20px; }
-        .card-header { border-bottom: 1px solid var(--border-color); color: #f0f6fc; font-weight: 600; padding: 12px 16px; background: transparent; display: flex; justify-content: space-between; align-items: center; }
-        .btn-primary { background-color: #238636; border-color: #2ea043; }
-        .btn-primary:hover { background-color: #2ea043; }
-        textarea, input, select { background-color: #0d1117 !important; border: 1px solid var(--border-color) !important; color: var(--text-main) !important; border-radius: 6px; }
-        .tab-content { display: none; }
+        .main-content { margin-left: var(--sidebar-width); padding: 20px; display: flex; gap: 20px; }
+        .thought-stream { width: 350px; background: var(--thought-bg); border-radius: 8px; border: 1px solid var(--border-color); height: calc(100vh - 40px); display: flex; flex-column: column; overflow: hidden; position: fixed; right: 20px; }
+        .thought-header { padding: 10px; border-bottom: 1px solid var(--border-color); background: #21262d; font-weight: bold; font-size: 0.8rem; text-transform: uppercase; }
+        .thought-body { flex: 1; overflow-y: auto; padding: 15px; font-family: 'Courier New', Courier, monospace; font-size: 0.75rem; }
+        .nav-link { color: #8b949e; margin-bottom: 8px; cursor: pointer; display: flex; align-items: center; padding: 10px; border-radius: 6px; }
+        .nav-link.active { color: var(--accent); background: #21262d; }
+        .card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 20px; }
+        .tab-content { display: none; width: calc(100% - 370px); }
         .tab-content.active { display: block; }
-        #results { white-space: pre-wrap; background: #0d1117; padding: 15px; border-radius: 6px; border: 1px solid var(--border-color); min-height: 120px; font-size: 0.95rem; line-height: 1.6; }
-        .health-footer { position: fixed; bottom: 0; left: var(--sidebar-width); right: 0; background: var(--bg-card); border-top: 1px solid var(--border-color); padding: 8px 24px; font-size: 0.75rem; display: flex; gap: 24px; z-index: 1000; color: var(--text-muted); }
-        .ticker { background: #1c2128; border-bottom: 1px solid var(--border-color); padding: 6px 20px; font-size: 0.8rem; overflow: hidden; white-space: nowrap; }
-        .ticker-inner { display: inline-block; animation: ticker-scroll 30s linear infinite; }
-        @keyframes ticker-scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        .duel-badge { font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; }
+        .inquisitor { background: #d29922; color: black; }
+        .solver { background: #238636; color: white; }
     </style>
 </head>
 <body>
     <div class="sidebar">
-        <div class="d-flex align-items-center mb-4 ps-2">
-            <i class="fas fa-brain fa-2x text-primary me-2"></i>
-            <h4 class="mb-0 text-white">Prob AI</h4>
-        </div>
+        <h4 class="mb-4"><i class="fas fa-brain text-primary"></i> Prob AI <small class="text-muted" style="font-size: 0.5rem;">V5</small></h4>
         <nav class="nav flex-column">
-            <a class="nav-link active" onclick="showTab('research')"><i class="fas fa-microscope"></i> Discovery Hub</a>
-            <a class="nav-link" onclick="showTab('swarm')"><i class="fas fa-project-diagram"></i> Swarm Console</a>
-            <a class="nav-link" onclick="showTab('critique')"><i class="fas fa-gavel"></i> Critique Lab</a>
-            <a class="nav-link" onclick="showTab('chat')"><i class="fas fa-comment-dots"></i> Agent Chat</a>
-            <a class="nav-link" onclick="showTab('api')"><i class="fas fa-network-wired"></i> Nexus & API</a>
+            <a class="nav-link active" onclick="showTab('research')"><i class="fas fa-search me-2"></i>Research Hub</a>
+            <a class="nav-link" onclick="showTab('duel')"><i class="fas fa-swords me-2"></i>Curiosity Duel</a>
+            <a class="nav-link" onclick="showTab('adv')"><i class="fas fa-microchip me-2"></i>Advanced Dev</a>
+            <a class="nav-link" onclick="showTab('api')"><i class="fas fa-network-wired me-2"></i>External Nexus</a>
         </nav>
     </div>
 
-    <div class="ticker" style="margin-left: var(--sidebar-width);">
-        <div class="ticker-inner" id="ticker-text">Swarm active... Autonomous research cycle 402... External Nexus online...</div>
-    </div>
-
     <div class="main-content">
-        <!-- Research Tab -->
+        <!-- Research Hub -->
         <div id="research" class="tab-content active">
             <div class="card">
-                <div class="card-header">Autonomous Reasoning</div>
+                <div class="card-header">Main Reasoning Hub</div>
                 <div class="card-body">
-                    <textarea id="query" class="form-control mb-3" rows="4" placeholder="Enter scenario..."></textarea>
-                    <button class="btn btn-primary" onclick="whatif()">What-If Simulation</button>
-                    <button class="btn btn-info" onclick="ask()">Quick Reason</button>
+                    <textarea id="query" class="form-control mb-3 bg-dark text-white" rows="4" placeholder="Enter research query..."></textarea>
+                    <button class="btn btn-primary w-100" onclick="ask()">Execute Discovery</button>
                 </div>
             </div>
-            <div id="results" class="mb-3">System ready.</div>
+            <div id="results" class="card p-3 font-monospace small">Ready for input...</div>
         </div>
 
-        <!-- Swarm Tab -->
-        <div id="swarm" class="tab-content">
+        <!-- Curiosity Duel -->
+        <div id="duel" class="tab-content">
             <div class="card">
-                <div class="card-header">Swarm Mission Deployment</div>
+                <div class="card-header">Inquisitor vs Solver Duel</div>
                 <div class="card-body">
-                    <div class="input-group mb-3">
-                        <input type="text" id="swarm-topic" class="form-control" placeholder="Mission topic...">
-                        <button class="btn btn-success" onclick="spawnMission()">Spawn Intelligence</button>
+                    <input type="text" id="duel-topic" class="form-control mb-3 bg-dark text-white" placeholder="Target Topic (e.g. Dark Matter)">
+                    <button class="btn btn-success w-100" onclick="runDuel()">Initiate Neural Combat</button>
+                    <hr>
+                    <div id="duel-scores" class="d-flex justify-content-around mb-3">
+                        <div class="text-center"><span class="duel-badge inquisitor">INQUISITOR</span><br><h3 id="score-inq">0</h3></div>
+                        <div class="text-center"><span class="duel-badge solver">SOLVER</span><br><h3 id="score-sol">0</h3></div>
                     </div>
-                    <h5>Active Intelligence Threads</h5>
-                    <div id="swarm-list"></div>
+                    <div id="duel-result" class="small p-2 border rounded"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Critique Tab -->
-        <div id="critique" class="tab-content">
+        <!-- Advanced Dev -->
+        <div id="adv" class="tab-content">
             <div class="card">
-                <div class="card-header">Critique & Debate Console</div>
+                <div class="card-header">Discovery Post-Processing</div>
                 <div class="card-body">
-                    <textarea id="critique-finding" class="form-control mb-3" rows="5" placeholder="Paste finding to critique..."></textarea>
-                    <div class="d-flex gap-2 mb-3">
-                        <button class="btn btn-warning" onclick="runCritique()">Scientific Critique</button>
-                        <button class="btn btn-danger" onclick="runDebate()">Neural Debate</button>
+                    <textarea id="adv-input" class="form-control mb-3 bg-dark text-white" rows="3" placeholder="Paste discovery for processing..."></textarea>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-warning btn-sm" onclick="checkParadox()">Detect Paradox</button>
+                        <button class="btn btn-info btn-sm" onclick="forecast()">Forecast Impact</button>
                     </div>
-                    <div id="critique-result" class="p-3 border rounded bg-black small font-monospace"></div>
+                    <div id="adv-result" class="mt-3 small p-2 bg-black rounded"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Nexus Tab -->
-        <div id="api" class="tab-content">
-            <div class="card">
-                <div class="card-header">External Nexus (Gemini/OpenAI)</div>
-                <div class="card-body">
-                    <div class="input-group mb-3">
-                        <select id="nexus-service" class="form-select" style="max-width: 150px;">
-                            <option value="gemini">Gemini</option>
-                        </select>
-                        <input type="text" id="nexus-prompt" class="form-control" placeholder="Query external brain...">
-                        <button class="btn btn-outline-primary" onclick="queryNexus()">Bridge Query</button>
-                    </div>
-                    <div id="nexus-result" class="p-2 border rounded small"></div>
-                </div>
-            </div>
+        <!-- Thought Stream Sidebar -->
+        <div class="thought-stream">
+            <div class="thought-header"><i class="fas fa-stream me-2"></i>Live Neural Trace</div>
+            <div class="thought-body" id="thought-log"></div>
         </div>
-    </div>
-
-    <div class="health-footer">
-        <div class="health-item">CPU <span id="health-cpu">-%</span></div>
-        <div class="health-item">Swarm Tasks <span id="health-swarm">0</span></div>
-        <div class="health-item ms-auto text-success">Prob AI v4.1.0 Multitasking Alpha</div>
     </div>
 
     <script>
-        function showTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
+        function showTab(id) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            event.target.closest('.nav-link').classList.add('active');
         }
 
-        async function whatif() {
-            const scenario = document.getElementById('query').value;
-            const res = await fetch('/api/whatif', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({scenario}) });
+        async function ask() {
+            const query = document.getElementById('query').value;
+            const res = await fetch('/api/ask', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({query}) });
             const data = await res.json();
             document.getElementById('results').innerText = data.result;
         }
 
-        async function spawnMission() {
-            const topic = document.getElementById('swarm-topic').value;
-            await fetch('/api/swarm/spawn', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({topic}) });
-            updateSwarm();
+        async function runDuel() {
+            const topic = document.getElementById('duel-topic').value;
+            const res = await fetch('/api/duel/run', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({topic}) });
+            const data = await res.json();
+            document.getElementById('score-inq').innerText = data.scores.inquisitor;
+            document.getElementById('score-sol').innerText = data.scores.solver;
+            document.getElementById('duel-result').innerHTML = `<strong>Q:</strong> ${data.questions}<br><br><strong>A:</strong> ${data.answer}`;
         }
 
-        async function updateSwarm() {
-            const res = await fetch('/api/swarm/status');
+        async function checkParadox() {
+            const disc = document.getElementById('adv-input').value;
+            const res = await fetch('/api/adv/paradox', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({discovery: disc}) });
+            const data = await res.json();
+            document.getElementById('adv-result').innerText = data.result;
+        }
+
+        async function forecast() {
+            const disc = document.getElementById('adv-input').value;
+            const res = await fetch('/api/adv/forecast', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({discovery: disc}) });
+            const data = await res.json();
+            document.getElementById('adv-result').innerText = data.result;
+        }
+
+        async function pollThoughts() {
+            const res = await fetch('/api/thoughts');
             const data = await res.json();
             let html = "";
-            for (let id in data) {
-                const t = data[id];
-                html += `<div class="mb-2 p-2 border rounded"><strong>${t.topic}</strong> [${t.status}] - ${t.progress}%</div>`;
-            }
-            document.getElementById('swarm-list').innerHTML = html;
-            document.getElementById('health-swarm').innerText = Object.keys(data).length;
+            data.forEach(t => {
+                const color = t.agent === 'inquisitor' ? '#d29922' : t.agent === 'solver' ? '#238636' : '#58a6ff';
+                html += `<div style="margin-bottom:8px; border-left: 2px solid ${color}; padding-left: 8px;">
+                    <span style="color:${color}; font-weight:bold;">[${t.agent.toUpperCase()}]</span> ${t.msg}
+                </div>`;
+            });
+            document.getElementById('thought-log').innerHTML = html;
+            const body = document.getElementById('thought-log');
+            body.scrollTop = body.scrollHeight;
         }
 
-        async function runCritique() {
-            const finding = document.getElementById('critique-finding').value;
-            const res = await fetch('/api/critique', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({finding}) });
-            const data = await res.json();
-            document.getElementById('critique-result').innerText = data.critique;
-        }
-
-        async function runDebate() {
-            const finding = document.getElementById('critique-finding').value;
-            const res = await fetch('/api/critique/debate', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({finding}) });
-            const data = await res.json();
-            document.getElementById('critique-result').innerHTML = `PRO: ${data.pro}<br><br>CON: ${data.con}<br><br>SYNTHESIS: ${data.synthesis}`;
-        }
-
-        async function queryNexus() {
-            const service = document.getElementById('nexus-service').value;
-            const prompt = document.getElementById('nexus-prompt').value;
-            const res = await fetch('/api/nexus/query', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({service, prompt}) });
-            const data = await res.json();
-            document.getElementById('nexus-result').innerText = data.result;
-        }
-
-        setInterval(updateSwarm, 3000);
+        setInterval(pollThoughts, 2000);
     </script>
 </body>
 </html>
