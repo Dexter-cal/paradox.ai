@@ -3,7 +3,7 @@
 To run Prob AI v10.0.0 on Google Colab and access the Sovereign Dashboard:
 
 ### 1. Open a new Colab Notebook
-Ensure you have "GPU" enabled in **Runtime -> Change runtime type**.
+Ensure you have "GPU" enabled in **Runtime -> Change runtime type**. Prob AI is fully compatible with the **Tesla T4 GPU** (16GB VRAM) provided in the free tier.
 
 ### 2. Clone and Setup
 Run the following in a cell:

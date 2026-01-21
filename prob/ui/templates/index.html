@@ -130,6 +130,8 @@
                         <button class="btn btn-warning btn-sm" onclick="runIP()">IP Nexus</button>
                         <button class="btn btn-glow-purple btn-sm" onclick="runDistill()">Distill Axiom</button>
                         <button class="btn btn-outline-success btn-sm" onclick="designExperiment()">Design Experiment</button>
+                        <button class="btn btn-outline-warning btn-sm" onclick="runLexicon()">Coin Term</button>
+                        <button class="btn btn-outline-info btn-sm" onclick="runTemporal()">Temporal View</button>
                     </div>
                     <div id="sov-result" class="p-3 bg-black rounded border border-danger small font-monospace" style="white-space:pre-wrap; min-height:200px;"></div>
                 </div>
@@ -265,6 +267,21 @@
             const res = await fetch('/api/sovereign/red-team', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({finding}) });
             const data = await res.json();
             document.getElementById('sov-result').innerText = data.attack;
+        }
+
+        async function runLexicon() {
+            const discovery = document.getElementById('sov-input').value;
+            const res = await fetch('/api/sovereign/lexicon', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({discovery}) });
+            const data = await res.json();
+            document.getElementById('sov-result').innerText = data.result;
+        }
+
+        async function runTemporal() {
+            const query = document.getElementById('sov-input').value;
+            const year = prompt("Enter Year for Historical Perspective:", "1950");
+            const res = await fetch('/api/sovereign/temporal', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({query, year}) });
+            const data = await res.json();
+            document.getElementById('sov-result').innerHTML = `<strong>HISTORICAL PERSPECTIVE (${year}):</strong><br>${data.result}`;
         }
 
         async function proposeCollab() {

@@ -42,6 +42,8 @@ from prob.engines.neural_architect import NeuralArchitect
 from prob.engines.knowledge_graph_pro import KnowledgeGraphPro
 from prob.engines.cognitive_profile import CognitiveProfile
 from prob.engines.collaboration_hub import CollaborationHub
+from prob.engines.temporal_anchor import TemporalAnchorEngine
+from prob.engines.lexicon import LexiconCreator
 
 app = Flask(__name__)
 app.secret_key = os.getenv("PROB_SECRET_KEY", secrets.token_hex(32))
@@ -86,6 +88,8 @@ architect = NeuralArchitect(brain, memory)
 kg_pro = KnowledgeGraphPro(brain, memory)
 profile = CognitiveProfile(brain, memory)
 collab_hub = CollaborationHub(brain, memory)
+temporal = TemporalAnchorEngine(brain)
+lexicon = LexiconCreator(brain)
 
 # Security Decorator
 def login_required(f):
@@ -140,6 +144,19 @@ def get_profile():
 def propose_collaboration():
     res = collab_hub.propose_collaboration()
     return jsonify({"proposal": res})
+
+@app.route('/api/sovereign/temporal', methods=['POST'])
+def run_temporal():
+    query = request.json.get('query')
+    year = request.json.get('year', 1950)
+    res = temporal.simulate_era_thought(query, year)
+    return jsonify({"result": res})
+
+@app.route('/api/sovereign/lexicon', methods=['POST'])
+def run_lexicon():
+    discovery = request.json.get('discovery')
+    res = lexicon.coin_term(discovery)
+    return jsonify({"result": res})
 
 @app.route('/api/brain/bootstrap', methods=['POST'])
 def bootstrap_brain():
