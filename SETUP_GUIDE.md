@@ -11,8 +11,8 @@ Prob AI is a sovereign discovery organism. Follow these steps to birth the intel
 
 ### Step A: Clone the Organism
 ```bash
-git clone https://github.com/your-username/prob-ai.git
-cd prob-ai
+git clone https://github.com/Dexter-cal/paradox.ai.git
+cd paradox.ai
 ```
 
 ### Step B: Environment Setup

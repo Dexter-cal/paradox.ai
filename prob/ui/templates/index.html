@@ -147,6 +147,7 @@
                     <div class="d-flex gap-2 mb-3">
                         <button class="btn btn-outline-warning btn-sm flex-grow-1" onclick="runRepair()">Autonomous System Fix</button>
                         <button class="btn btn-outline-danger btn-sm flex-grow-1" onclick="runArchitect()">Propose Neural Update</button>
+                        <button class="btn btn-outline-info btn-sm flex-grow-1" onclick="proposeCollab()">Propose Collab</button>
                     </div>
                     <div id="system-log" class="small p-2 bg-black rounded font-monospace" style="max-height: 200px; overflow-y: auto;"></div>
                 </div>
@@ -264,6 +265,12 @@
             const res = await fetch('/api/sovereign/red-team', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({finding}) });
             const data = await res.json();
             document.getElementById('sov-result').innerText = data.attack;
+        }
+
+        async function proposeCollab() {
+            const res = await fetch('/api/meta/propose-collaboration', { method: 'POST' });
+            const data = await res.json();
+            document.getElementById('system-log').innerText = data.proposal;
         }
 
         function addThought(agent, msg) {

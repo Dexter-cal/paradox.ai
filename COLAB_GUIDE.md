@@ -8,8 +8,8 @@ Ensure you have "GPU" enabled in **Runtime -> Change runtime type**.
 ### 2. Clone and Setup
 Run the following in a cell:
 ```python
-!git clone https://github.com/your-username/prob-ai.git
-%cd prob-ai
+!git clone https://github.com/Dexter-cal/paradox.ai.git
+%cd paradox.ai
 !pip install -r requirements.txt
 !pip install flask-cloudflared
 ```
