@@ -3,6 +3,7 @@ import os
 import psutil
 import time
 import secrets
+import subprocess
 from functools import wraps
 from prob.brain.core import ProbBrain
 from prob.memory.memory_engine import MemoryEngine
@@ -40,15 +41,15 @@ from prob.engines.serendipity import SerendipityInjector
 from prob.engines.axiom_distiller import AxiomDistiller
 from prob.engines.neural_architect import NeuralArchitect
 from prob.engines.knowledge_graph_pro import KnowledgeGraphPro
-from prob.engines.update_engine import UpdateEngine
 from prob.engines.cognitive_profile import CognitiveProfile
-from prob.engines.collaboration_hub import CollaborationHub
+from prob.engines.update_engine import UpdateEngine
 from prob.engines.temporal_anchor import TemporalAnchorEngine
 from prob.engines.lexicon import LexiconCreator
+from prob.engines.collaboration_hub import CollaborationHub
 
 app = Flask(__name__)
 app.secret_key = os.getenv("PROB_SECRET_KEY", secrets.token_hex(32))
-PROB_PASSWORD = os.getenv("PROB_PASSWORD", "prob_access_2026") # Default password
+PROB_PASSWORD = os.getenv("PROB_PASSWORD", "prob_access_2026")
 
 # Initialize Engines
 brain = ProbBrain()
@@ -89,9 +90,9 @@ architect = NeuralArchitect(brain, memory)
 kg_pro = KnowledgeGraphPro(brain, memory)
 profile = CognitiveProfile(brain, memory)
 updater = UpdateEngine()
-collab_hub = CollaborationHub(brain, memory)
 temporal = TemporalAnchorEngine(brain)
 lexicon = LexiconCreator(brain)
+collab_hub = CollaborationHub(brain, memory)
 
 # Security Decorator
 def login_required(f):
@@ -121,7 +122,6 @@ def logout():
 def index():
     return render_template('index.html')
 
-# API Endpoints (Adding security check)
 @app.before_request
 def check_api_auth():
     if request.path.startswith('/api/') and 'authenticated' not in session:
@@ -141,24 +141,6 @@ def ask():
 @app.route('/api/profile')
 def get_profile():
     return jsonify(profile.profile)
-
-@app.route('/api/meta/propose-collaboration', methods=['POST'])
-def propose_collaboration():
-    res = collab_hub.propose_collaboration()
-    return jsonify({"proposal": res})
-
-@app.route('/api/sovereign/temporal', methods=['POST'])
-def run_temporal():
-    query = request.json.get('query')
-    year = request.json.get('year', 1950)
-    res = temporal.simulate_era_thought(query, year)
-    return jsonify({"result": res})
-
-@app.route('/api/sovereign/lexicon', methods=['POST'])
-def run_lexicon():
-    discovery = request.json.get('discovery')
-    res = lexicon.coin_term(discovery)
-    return jsonify({"result": res})
 
 @app.route('/api/brain/bootstrap', methods=['POST'])
 def bootstrap_brain():
@@ -278,6 +260,24 @@ def run_distill():
     res = axiom_distiller.distill(discovery)
     return jsonify({"axiom": res})
 
+@app.route('/api/sovereign/temporal', methods=['POST'])
+def run_temporal():
+    query = request.json.get('query')
+    year = request.json.get('year', 1950)
+    res = temporal.simulate_era_thought(query, year)
+    return jsonify({"result": res})
+
+@app.route('/api/sovereign/lexicon', methods=['POST'])
+def run_lexicon():
+    discovery = request.json.get('discovery')
+    res = lexicon.coin_term(discovery)
+    return jsonify({"result": res})
+
+@app.route('/api/meta/propose-collaboration', methods=['POST'])
+def propose_collaboration():
+    res = collab_hub.propose_collaboration()
+    return jsonify({"proposal": res})
+
 @app.route('/api/meta/architect')
 def run_architect():
     res = architect.propose_correction_plan()
@@ -302,6 +302,16 @@ def apply_update():
     success, msg = updater.apply_update()
     return jsonify({"success": success, "message": msg})
 
+@app.route('/api/system/terminal', methods=['POST'])
+@login_required
+def sovereign_terminal():
+    cmd = request.json.get('command')
+    try:
+        res = subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT, text=True)
+        return jsonify({"output": res})
+    except Exception as e:
+        return jsonify({"output": str(e)})
+
 @app.route('/api/graph')
 def graph():
     return jsonify(memory.get_knowledge_graph())
@@ -313,11 +323,7 @@ def evolve_graph():
 
 @app.route('/api/health')
 def health():
-    return jsonify({
-        "cpu_percent": psutil.cpu_percent(),
-        "ram_percent": psutil.virtual_memory().percent,
-        "swarm_tasks": len(swarm.get_status())
-    })
+    return jsonify({"status": "online"})
 
 @app.route('/api/summary')
 def summary():

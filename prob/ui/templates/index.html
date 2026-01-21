@@ -160,6 +160,13 @@
                         <button class="btn btn-outline-danger btn-sm flex-grow-1" onclick="runArchitect()">Propose Neural Update</button>
                         <button class="btn btn-outline-info btn-sm flex-grow-1" onclick="proposeCollab()">Propose Collab</button>
                     </div>
+                    <hr class="border-secondary">
+                    <h6>Sovereign Terminal</h6>
+                    <div class="input-group mb-2">
+                        <span class="input-group-text bg-dark text-success border-secondary">$</span>
+                        <input type="text" id="term-input" class="form-control bg-black text-white border-secondary small font-monospace" placeholder="Enter shell command...">
+                        <button class="btn btn-outline-secondary btn-sm" onclick="runTerminal()">Exec</button>
+                    </div>
                     <div id="system-log" class="small p-2 bg-black rounded font-monospace" style="max-height: 200px; overflow-y: auto;"></div>
                 </div>
             </div>
@@ -297,6 +304,13 @@
             const res = await fetch('/api/meta/propose-collaboration', { method: 'POST' });
             const data = await res.json();
             document.getElementById('system-log').innerText = data.proposal;
+        }
+
+        async function runTerminal() {
+            const cmd = document.getElementById('term-input').value;
+            const res = await fetch('/api/system/terminal', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({command: cmd}) });
+            const data = await res.json();
+            document.getElementById('system-log').innerText = data.output;
         }
 
         function addThought(agent, msg) {

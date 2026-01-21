@@ -1,33 +1,19 @@
+from prob.brain.core import ProbBrain
+
 class HonestyEngine:
-    def __init__(self):
-        pass
+    def __init__(self, brain: ProbBrain = None):
+        self.brain = brain
 
-    def evaluate(self, result):
+    def evaluate(self, query, result):
         # In a real system, this might use another AI model to check the 'result'
-        # for hallucinations or lack of evidence.
-
-        confidence = 0.85 # Default high for prototype
+        confidence = 0.85
         flags = []
 
         if "i am not sure" in result.lower() or "uncertain" in result.lower():
             confidence = 0.5
             flags.append("Low confidence detected in response.")
 
-        if "cannot" in result.lower() and "limit" in result.lower():
-            flags.append("AI acknowledged a boundary.")
+        sensitive_keywords = ["virus", "chemical", "weapon", "illegal", "medical", "hiv"]
+        is_sensitive = any(word in result.lower() or word in query.lower() for word in sensitive_keywords)
 
-        is_sensitive = any(word in result.lower() for word in ["virus", "chemical", "weapon", "illegal", "medical"])
-
-        return {
-            "confidence": confidence,
-            "flags": flags,
-            "honest": True if confidence > 0.4 else False,
-            "sensitive": is_sensitive
-        }
-
-    def check_self_consistency(self, multiple_results):
-        # Compares multiple reasoning paths
-        if not multiple_results:
-            return 1.0
-        # Simplified: check if they all mention the same key terms
-        return 0.9
+        return result, is_sensitive
