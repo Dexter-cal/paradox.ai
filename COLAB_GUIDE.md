@@ -16,29 +16,47 @@ Copy the entire block below into the first cell of your Colab notebook and press
 
 ```python
 # 1. Clone the Paradox.ai repository
+import os
+import sys
+
+# Remove existing if any
+!rm -rf paradox.ai
+
+# Clone fresh
 !git clone https://github.com/Dexter-cal/paradox.ai.git
+
+# Move into the directory
 %cd paradox.ai
 
+# Add the current directory to sys.path so 'prob' can be found
+sys.path.append(os.getcwd())
+
 # 2. Install all sovereign dependencies
-!pip install -r requirements.txt
-!pip install flask-cloudflared
+# Using --quiet to keep the output clean
+!pip install -r requirements.txt --quiet
+!pip install flask-cloudflared --quiet
+!pip install duckduckgo-search --upgrade --quiet
 
 # 3. Set your Sovereignty Key (Access Key)
-import os
 os.environ["PROB_PASSWORD"] = "prob_access_2026" # Change this to your preferred password
 
 # 4. Launch Prob AI with a secure public tunnel
 from flask_cloudflared import _run_cloudflared
-import threading
 from prob.ui.app import app
 
 # This creates the public link
-public_url = _run_cloudflared(5000, 5000)
-print(f"\n[SUCCESS] Prob Dashboard is booting up!")
-print(f"[LINK] Open this URL to access Prob: {public_url}")
-print("-" * 50)
+# Note: It might take 10-20 seconds for the URL to appear
+try:
+    public_url = _run_cloudflared(5000, 5000)
+    print(f"\n" + "="*50)
+    print(f"[SUCCESS] Prob Dashboard is booting up!")
+    print(f"[LINK] Open this URL to access Prob: {public_url}")
+    print("="*50 + "\n")
+except Exception as e:
+    print(f"[ERROR] Tunnel failed: {e}")
 
 # Start the server
+# Use debug=False for stable public deployment
 app.run(port=5000)
 ```
 
@@ -54,9 +72,12 @@ app.run(port=5000)
 3. Prob will now autonomously download its brain and begin researching.
 
 ---
+### Troubleshooting
+If you get `ModuleNotFoundError: No module named 'prob'`, make sure you ran the `%cd paradox.ai` and `sys.path.append(os.getcwd())` lines correctly.
+
+---
 ### How to Update Prob AI
-If you make changes to your GitHub repo (`paradox.ai`), you don't need to restart Colab.
+If you make changes to your GitHub repo (`paradox.ai`):
 1. Go to the **System Core** tab in the Prob Dashboard.
 2. Click **Check for Updates**.
-3. If an update is found, click **Apply GitHub Update**.
-4. Prob will pull your latest code from GitHub automatically.
+3. Click **Apply GitHub Update**.

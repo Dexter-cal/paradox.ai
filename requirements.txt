@@ -11,3 +11,5 @@ datasets
 pandas
 pyarrow
 matplotlib
+nvidia-ml-py
+flask-cloudflared

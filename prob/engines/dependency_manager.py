@@ -6,9 +6,9 @@ class DependencyManager:
     def __init__(self):
         self.essential_packages = [
             "transformers", "torch", "bitsandbytes", "peft",
-            "accelerate", "psutil", "pynvml", "flask",
-            "duckduckgo_search", "matplotlib", "requests", "datasets",
-            "flask-cloudflared"
+            "accelerate", "psutil", "nvidia-ml-py", "flask",
+            "duckduckgo-search", "matplotlib", "requests", "datasets",
+            "flask-cloudflared", "pandas", "pyarrow"
         ]
 
     def check_and_install_all(self):
