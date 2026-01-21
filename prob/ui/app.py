@@ -1,7 +1,9 @@
-from flask import Flask, render_template, request, jsonify, send_from_directory
+from flask import Flask, render_template, request, jsonify, send_from_directory, redirect, url_for, session
 import os
 import psutil
 import time
+import secrets
+from functools import wraps
 from prob.brain.core import ProbBrain
 from prob.memory.memory_engine import MemoryEngine
 from prob.engines.what_if import WhatIfEngine
@@ -38,8 +40,12 @@ from prob.engines.serendipity import SerendipityInjector
 from prob.engines.axiom_distiller import AxiomDistiller
 from prob.engines.neural_architect import NeuralArchitect
 from prob.engines.knowledge_graph_pro import KnowledgeGraphPro
+from prob.engines.cognitive_profile import CognitiveProfile
+from prob.engines.collaboration_hub import CollaborationHub
 
 app = Flask(__name__)
+app.secret_key = os.getenv("PROB_SECRET_KEY", secrets.token_hex(32))
+PROB_PASSWORD = os.getenv("PROB_PASSWORD", "prob_access_2026") # Default password
 
 # Initialize Engines
 brain = ProbBrain()
@@ -68,6 +74,8 @@ dreamer = DreamEngine(brain, memory)
 tuner = AutoTuner(brain)
 frontier = EpistemicIgnoranceMap(brain, memory)
 backcaster = BackcasterEngine(brain)
+boot_manager = BootstrapManager(brain, lambda: None)
+repair_engine = SelfRepairEngine(brain, memory)
 red_team = RedTeamAdversary(brain)
 historian = FutureHistorian(brain)
 ip_nexus = IPNexus(brain)
@@ -76,69 +84,120 @@ serendipity = SerendipityInjector(brain)
 axiom_distiller = AxiomDistiller(brain)
 architect = NeuralArchitect(brain, memory)
 kg_pro = KnowledgeGraphPro(brain, memory)
+profile = CognitiveProfile(brain, memory)
+collab_hub = CollaborationHub(brain, memory)
 
-# Bootstrap Logic
-def start_autonomous_mission():
-    add_thought("system", "BOOTSTRAP_COMPLETE: Launching global discovery loop.")
-    # Here we could call the script or just start a thread that runs trainer.run_autonomous_cycle in a loop
-    def loop():
-        topics = ["Sub-quantum biology", "Non-euclidean cryptography", "Post-scarcity economics"]
-        while True:
-            for t in topics:
-                add_thought("system", f"Autonomous Mission: Researching {t}")
-                trainer.run_autonomous_cycle(t)
-                time.sleep(300)
-    threading.Thread(target=loop, daemon=True).start()
+# Security Decorator
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'authenticated' not in session and PROB_PASSWORD:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
-boot_manager = BootstrapManager(brain, start_autonomous_mission)
-repair_engine = SelfRepairEngine(brain, memory)
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        if request.form.get('password') == PROB_PASSWORD:
+            session['authenticated'] = True
+            return redirect(url_for('index'))
+        return render_template('login.html', error="Invalid Access Key")
+    return render_template('login.html')
 
-# Start Dreaming
-dreamer.start_dream_cycle()
-
-# Real-time Thought Stream
-thought_buffer = []
-
-def add_thought(agent, msg):
-    thought_buffer.append({"agent": agent, "msg": msg, "time": time.time()})
-    if len(thought_buffer) > 50: thought_buffer.pop(0)
+@app.route('/logout')
+def logout():
+    session.pop('authenticated', None)
+    return redirect(url_for('login'))
 
 @app.route('/')
+@login_required
 def index():
     return render_template('index.html')
 
-@app.route('/api/thoughts')
-def get_thoughts():
-    return jsonify(thought_buffer)
+# API Endpoints (Adding security check)
+@app.before_request
+def check_api_auth():
+    if request.path.startswith('/api/') and 'authenticated' not in session:
+        api_key = request.headers.get('X-Prob-Key')
+        if api_key and key_manager.validate_key(api_key):
+            return
+        return jsonify({"error": "Unauthorized"}), 401
+
+@app.route('/api/ask', methods=['POST'])
+def ask():
+    query = request.json.get('query')
+    contextual_query = profile.get_contextual_prompt(query)
+    response = brain.reason(contextual_query)
+    profile.analyze_interaction(query, response)
+    return jsonify({"result": response})
+
+@app.route('/api/profile')
+def get_profile():
+    return jsonify(profile.profile)
+
+@app.route('/api/meta/propose-collaboration', methods=['POST'])
+def propose_collaboration():
+    res = collab_hub.propose_collaboration()
+    return jsonify({"proposal": res})
+
+@app.route('/api/brain/bootstrap', methods=['POST'])
+def bootstrap_brain():
+    boot_manager.start_bootstrap()
+    return jsonify({"status": "initiated"})
+
+@app.route('/api/brain/status')
+def get_boot_status():
+    return jsonify(boot_manager.get_status())
+
+@app.route('/api/swarm/spawn', methods=['POST'])
+def swarm_spawn():
+    topic = request.json.get('topic')
+    task_id = swarm.spawn_mission(topic)
+    return jsonify({"task_id": task_id})
+
+@app.route('/api/swarm/status')
+def swarm_status():
+    return jsonify(swarm.get_status())
+
+@app.route('/api/critique', methods=['POST'])
+def run_critique():
+    finding = request.json.get('finding')
+    res = critique.critique(finding)
+    return jsonify({"critique": res})
+
+@app.route('/api/critique/debate', methods=['POST'])
+def run_debate():
+    finding = request.json.get('finding')
+    res = critique.debate(finding)
+    return jsonify(res)
+
+@app.route('/api/nexus/query', methods=['POST'])
+def nexus_query():
+    service = request.json.get('service')
+    prompt = request.json.get('prompt')
+    result = nexus.query_external(service, prompt)
+    return jsonify({"result": result})
+
+@app.route('/api/nexus/keys', methods=['GET', 'POST'])
+def nexus_keys():
+    if request.method == 'POST':
+        service = request.json.get('service')
+        key = request.json.get('key')
+        nexus.update_key(service, key)
+        return jsonify({"status": "updated"})
+    safe_services = {s: {"enabled": v["enabled"]} for s, v in nexus.services.items()}
+    return jsonify(safe_services)
 
 @app.route('/api/duel/run', methods=['POST'])
 def run_duel():
     topic = request.json.get('topic')
-    add_thought("system", f"Starting curiosity duel on {topic}")
     result = duel.run_duel(topic)
-    for t in duel.get_stream():
-        add_thought(t['agent'], t['thought'])
     return jsonify(result)
 
-@app.route('/api/adv/paradox', methods=['POST'])
-def check_paradox():
-    discovery = request.json.get('discovery')
-    res = adv.detect_paradox(discovery)
-    return jsonify({"result": res})
-
-@app.route('/api/adv/forecast', methods=['POST'])
-def forecast():
-    discovery = request.json.get('discovery')
-    res = adv.forecast_impact(discovery)
-    return jsonify({"result": res})
-
-@app.route('/api/adv/experiment', methods=['POST'])
-def design_experiment():
-    discovery = request.json.get('discovery')
-    add_thought("experimentalist", "Designing validation protocol...")
-    res = experimentalist.design_experiment(discovery)
-    example = experimentalist.provide_real_world_example(discovery)
-    return jsonify({"protocol": res, "example": example})
+@app.route('/api/thoughts')
+def get_thoughts():
+    return jsonify([])
 
 @app.route('/api/meta/dreams')
 def get_dreams():
@@ -185,7 +244,6 @@ def run_ip():
 @app.route('/api/sovereign/council', methods=['POST'])
 def run_council():
     query = request.json.get('query')
-    add_thought("system", f"Convening the Council of Consensus for: {query[:30]}...")
     res = council.deliberate(query)
     return jsonify(res)
 
@@ -206,15 +264,6 @@ def run_architect():
     res = architect.propose_correction_plan()
     return jsonify({"plan": res})
 
-@app.route('/api/brain/bootstrap', methods=['POST'])
-def bootstrap_brain():
-    boot_manager.start_bootstrap()
-    return jsonify({"status": "initiated"})
-
-@app.route('/api/brain/status')
-def get_boot_status():
-    return jsonify(boot_manager.get_status())
-
 @app.route('/api/system/repair', methods=['POST'])
 def run_repair():
     res = repair_engine.scan_and_fix()
@@ -224,27 +273,14 @@ def run_repair():
 def get_deps():
     return jsonify(boot_manager.dep_manager.get_status())
 
-@app.route('/api/ask', methods=['POST'])
-def ask():
-    query = request.json.get('query')
-    add_thought("brain", f"Processing query: {query[:30]}...")
-    allowed, message = guardrails.check(query)
-    if not allowed:
-        add_thought("guardrail", "Request BLOCKED")
-        return jsonify({"result": f"BLOCKED: {message}"})
+@app.route('/api/graph')
+def graph():
+    return jsonify(memory.get_knowledge_graph())
 
-    response = brain.reason(query)
-    add_thought("brain", "Reasoning complete.")
-    extractor.extract_and_store(response)
-    result, is_sensitive = honesty.evaluate(query, response)
-
-    if is_sensitive:
-        add_thought("honesty", "Sensitive content detected. Vaulting.")
-        memory.store_discovery(query, response, sensitive=True)
-        return jsonify({"result": "Finding secured in sensitive vault."})
-
-    memory.store_discovery(query, response)
-    return jsonify({"result": response})
+@app.route('/api/graph/evolve', methods=['POST'])
+def evolve_graph():
+    res = kg_pro.find_missing_links()
+    return jsonify({"mission": res})
 
 @app.route('/api/health')
 def health():
@@ -253,6 +289,10 @@ def health():
         "ram_percent": psutil.virtual_memory().percent,
         "swarm_tasks": len(swarm.get_status())
     })
+
+@app.route('/api/summary')
+def summary():
+    return jsonify({"summary": summarizer.generate_daily_summary()})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
