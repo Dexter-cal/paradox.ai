@@ -40,6 +40,7 @@ from prob.engines.serendipity import SerendipityInjector
 from prob.engines.axiom_distiller import AxiomDistiller
 from prob.engines.neural_architect import NeuralArchitect
 from prob.engines.knowledge_graph_pro import KnowledgeGraphPro
+from prob.engines.update_engine import UpdateEngine
 from prob.engines.cognitive_profile import CognitiveProfile
 from prob.engines.collaboration_hub import CollaborationHub
 from prob.engines.temporal_anchor import TemporalAnchorEngine
@@ -87,6 +88,7 @@ axiom_distiller = AxiomDistiller(brain)
 architect = NeuralArchitect(brain, memory)
 kg_pro = KnowledgeGraphPro(brain, memory)
 profile = CognitiveProfile(brain, memory)
+updater = UpdateEngine()
 collab_hub = CollaborationHub(brain, memory)
 temporal = TemporalAnchorEngine(brain)
 lexicon = LexiconCreator(brain)
@@ -289,6 +291,16 @@ def run_repair():
 @app.route('/api/system/dependencies')
 def get_deps():
     return jsonify(boot_manager.dep_manager.get_status())
+
+@app.route('/api/system/update/check')
+def check_update():
+    available, msg = updater.check_for_updates()
+    return jsonify({"available": available, "message": msg})
+
+@app.route('/api/system/update/apply', methods=['POST'])
+def apply_update():
+    success, msg = updater.apply_update()
+    return jsonify({"success": success, "message": msg})
 
 @app.route('/api/graph')
 def graph():

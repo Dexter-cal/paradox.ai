@@ -145,6 +145,15 @@
                 <div class="card-body">
                     <div id="dep-list" class="small p-2 bg-black rounded mb-3"></div>
                     <hr class="border-secondary">
+                    <h6>Version Control</h6>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <small class="text-muted" id="update-status">Branch: main</small>
+                        <div>
+                            <button class="btn btn-outline-info btn-sm me-2" onclick="checkUpdate()">Check for Updates</button>
+                            <button class="btn btn-primary btn-sm" id="btn-apply-update" onclick="applyUpdate()" style="display:none;">Apply GitHub Update</button>
+                        </div>
+                    </div>
+                    <hr class="border-secondary">
                     <h6>Self-Repair & Optimization</h6>
                     <div class="d-flex gap-2 mb-3">
                         <button class="btn btn-outline-warning btn-sm flex-grow-1" onclick="runRepair()">Autonomous System Fix</button>
@@ -309,6 +318,23 @@
                 html += `<div><i class="fas fa-${data[pkg] ? 'check-circle text-success' : 'times-circle text-danger'} me-2"></i>${pkg}</div>`;
             }
             document.getElementById('dep-list').innerHTML = html;
+        }
+
+        async function checkUpdate() {
+            const res = await fetch('/api/system/update/check');
+            const data = await res.json();
+            document.getElementById('update-status').innerText = data.message;
+            if (data.available) {
+                document.getElementById('btn-apply-update').style.display = 'inline-block';
+            }
+        }
+
+        async function applyUpdate() {
+            if (!confirm("This will pull latest changes from GitHub and stash local edits. Proceed?")) return;
+            const res = await fetch('/api/system/update/apply', { method: 'POST' });
+            const data = await res.json();
+            alert(data.message);
+            if (data.success) location.reload();
         }
 
         setInterval(updateBootStatus, 3000);
