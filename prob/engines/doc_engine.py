@@ -2,10 +2,12 @@ import os
 import json
 from datetime import datetime
 from prob.memory.memory_engine import MemoryEngine
+from prob.brain.core import ProbBrain
 
 class DocumentationEngine:
-    def __init__(self, memory: MemoryEngine, output_dir="prob/output/docs"):
+    def __init__(self, memory: MemoryEngine, brain: ProbBrain = None, output_dir="prob/output/docs"):
         self.memory = memory
+        self.brain = brain
         self.output_dir = output_dir
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
@@ -41,6 +43,10 @@ Each branch is assigned a confidence score and checked for internal contradictio
 ## Discussion
 The findings suggest a complex interplay of variables. Further human-led experimentation is recommended.
 
+## Recommended Validation Experiments
+The following protocols have been generated autonomously by the Prob Experimentalist Engine:
+{self._get_experiment_protocol(result)}
+
 ## References
 - Prob AI Internal Memory Log (Session: {datetime.now().isoformat()})
 """
@@ -49,6 +55,12 @@ The findings suggest a complex interplay of variables. Further human-led experim
         with open(path, "w") as f:
             f.write(paper)
         return path
+
+    def _get_experiment_protocol(self, discovery):
+        if not self.brain:
+            return "Protocol generation requires an active brain link."
+        prompt = f"Design a short validation experiment for: {discovery}. Output only the steps."
+        return self.brain.reason(prompt)
 
     def generate_book(self, topic):
         # Compiles multiple research entries into a "book"

@@ -23,6 +23,7 @@ from prob.engines.critique_console import CritiqueConsole
 from prob.engines.external_nexus import ExternalNexus
 from prob.engines.curiosity_duel import CuriosityDuel
 from prob.engines.adv_dev import AdvancedDevFeatures
+from prob.engines.experimentalist import ExperimentalistEngine
 
 app = Flask(__name__)
 
@@ -31,7 +32,7 @@ brain = ProbBrain()
 memory = MemoryEngine()
 whatif_engine = WhatIfEngine(brain, memory)
 honesty = HonestyEngine(brain)
-doc_engine = DocumentationEngine(memory)
+doc_engine = DocumentationEngine(memory, brain=brain)
 search = SearchEngine()
 data_lib = DataLibraryEngine()
 coder = CoderEngine()
@@ -48,6 +49,7 @@ critique = CritiqueConsole(brain)
 nexus = ExternalNexus(brain)
 duel = CuriosityDuel(brain, memory)
 adv = AdvancedDevFeatures(brain, memory)
+experimentalist = ExperimentalistEngine(brain)
 
 # Real-time Thought Stream
 thought_buffer = []
@@ -84,6 +86,14 @@ def forecast():
     discovery = request.json.get('discovery')
     res = adv.forecast_impact(discovery)
     return jsonify({"result": res})
+
+@app.route('/api/adv/experiment', methods=['POST'])
+def design_experiment():
+    discovery = request.json.get('discovery')
+    add_thought("experimentalist", "Designing validation protocol...")
+    res = experimentalist.design_experiment(discovery)
+    example = experimentalist.provide_real_world_example(discovery)
+    return jsonify({"protocol": res, "example": example})
 
 @app.route('/api/ask', methods=['POST'])
 def ask():
