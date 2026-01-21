@@ -28,6 +28,13 @@ from prob.engines.dream_engine import DreamEngine
 from prob.engines.auto_tuner import AutoTuner
 from prob.engines.epistemic_map import EpistemicIgnoranceMap
 from prob.engines.backcaster import BackcasterEngine
+from prob.engines.red_team_adversary import RedTeamAdversary
+from prob.engines.future_historian import FutureHistorian
+from prob.engines.ip_nexus import IPNexus
+from prob.engines.council import CouncilOfConsensus
+from prob.engines.serendipity import SerendipityInjector
+from prob.engines.axiom_distiller import AxiomDistiller
+from prob.engines.neural_architect import NeuralArchitect
 
 app = Flask(__name__)
 
@@ -58,6 +65,13 @@ dreamer = DreamEngine(brain, memory)
 tuner = AutoTuner(brain)
 frontier = EpistemicIgnoranceMap(brain, memory)
 backcaster = BackcasterEngine(brain)
+red_team = RedTeamAdversary(brain)
+historian = FutureHistorian(brain)
+ip_nexus = IPNexus(brain)
+council = CouncilOfConsensus(brain)
+serendipity = SerendipityInjector(brain)
+axiom_distiller = AxiomDistiller(brain)
+architect = NeuralArchitect(brain, memory)
 
 # Start Dreaming
 dreamer.start_dream_cycle()
@@ -128,6 +142,49 @@ def run_backcast():
     year = request.json.get('year', 2040)
     res = backcaster.generate_roadmap(outcome, year)
     return jsonify({"roadmap": res})
+
+@app.route('/api/sovereign/red-team', methods=['POST'])
+def run_red_team():
+    finding = request.json.get('finding')
+    res = red_team.attack(finding)
+    return jsonify({"attack": res})
+
+@app.route('/api/sovereign/history', methods=['POST'])
+def run_history():
+    discovery = request.json.get('discovery')
+    res = historian.generate_future_history(discovery)
+    return jsonify({"history": res})
+
+@app.route('/api/sovereign/ip', methods=['POST'])
+def run_ip():
+    discovery = request.json.get('discovery')
+    patent = ip_nexus.draft_patent(discovery)
+    names = ip_nexus.name_discovery(discovery)
+    return jsonify({"patent": patent, "names": names})
+
+@app.route('/api/sovereign/council', methods=['POST'])
+def run_council():
+    query = request.json.get('query')
+    add_thought("system", f"Convening the Council of Consensus for: {query[:30]}...")
+    res = council.deliberate(query)
+    return jsonify(res)
+
+@app.route('/api/sovereign/serendipity', methods=['POST'])
+def run_serendipity():
+    query = request.json.get('query')
+    res, domain = serendipity.inject_lateral_thought(query)
+    return jsonify({"result": res, "domain": domain})
+
+@app.route('/api/sovereign/distill', methods=['POST'])
+def run_distill():
+    discovery = request.json.get('discovery')
+    res = axiom_distiller.distill(discovery)
+    return jsonify({"axiom": res})
+
+@app.route('/api/meta/architect')
+def run_architect():
+    res = architect.propose_correction_plan()
+    return jsonify({"plan": res})
 
 @app.route('/api/ask', methods=['POST'])
 def ask():

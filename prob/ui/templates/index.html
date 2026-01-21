@@ -38,6 +38,8 @@
             <a class="nav-link" onclick="showTab('dreams')"><i class="fas fa-moon me-2"></i>Dream Stream</a>
             <a class="nav-link" onclick="showTab('frontier')"><i class="fas fa-compass me-2"></i>Frontiers</a>
             <a class="nav-link" onclick="showTab('backcast')"><i class="fas fa-history me-2"></i>Backcasting</a>
+            <a class="nav-link" onclick="showTab('sovereign')"><i class="fas fa-crown me-2"></i>Sovereign Lab</a>
+            <a class="nav-link" onclick="showTab('council')"><i class="fas fa-users me-2"></i>Council Chamber</a>
             <a class="nav-link" onclick="showTab('meta')"><i class="fas fa-dna me-2"></i>Recursive AI</a>
             <a class="nav-link" onclick="showTab('duel')"><i class="fas fa-bolt me-2"></i>Neural Combat</a>
         </nav>
@@ -90,6 +92,14 @@
                     <div id="meta-result" class="mt-3 p-2 bg-black rounded small italic text-info"></div>
                 </div>
             </div>
+            <div class="card">
+                <div class="card-header">Neural Architecture Evolution</div>
+                <div class="card-body">
+                    <p class="small">The Architect analyzes failure patterns and proposes structural changes or new training mixtures.</p>
+                    <button class="btn btn-outline-danger w-100" onclick="runArchitect()">Propose Correction Plan</button>
+                    <div id="architect-result" class="mt-3 p-3 bg-black rounded small font-monospace" style="white-space:pre-wrap;"></div>
+                </div>
+            </div>
         </div>
 
         <!-- Backcast -->
@@ -101,6 +111,37 @@
                     <input type="number" id="backcast-year" class="form-control mb-3 bg-dark text-white border-secondary" value="2045">
                     <button class="btn btn-primary w-100" onclick="runBackcast()">Generate Reverse Roadmap</button>
                     <div id="backcast-result" class="mt-3 p-3 bg-black rounded small font-monospace" style="white-space:pre-wrap;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sovereign Lab -->
+        <div id="sovereign" class="tab-content">
+            <div class="card">
+                <div class="card-header">Sovereign Intel Processing</div>
+                <div class="card-body">
+                    <textarea id="sov-input" class="form-control mb-3 bg-dark text-white border-secondary" rows="3" placeholder="Paste discovery for sovereignty processing..."></textarea>
+                    <div class="d-flex gap-2 mb-3">
+                        <button class="btn btn-danger btn-sm" onclick="runRedTeam()"><i class="fas fa-biohazard me-1"></i>Red Team Attack</button>
+                        <button class="btn btn-info btn-sm" onclick="runHistory()"><i class="fas fa-hourglass-half me-1"></i>Future History</button>
+                        <button class="btn btn-warning btn-sm" onclick="runIP()"><i class="fas fa-file-contract me-1"></i>Draft IP</button>
+                        <button class="btn btn-glow-purple btn-sm" onclick="runDistill()"><i class="fas fa-gem me-1"></i>Distill Axiom</button>
+                        <button class="btn btn-outline-info btn-sm" onclick="runSerendipity()"><i class="fas fa-random me-1"></i>Lateral Leap</button>
+                    </div>
+                    <div id="sov-result" class="p-3 bg-black rounded border border-danger small font-monospace" style="white-space:pre-wrap;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Council Chamber -->
+        <div id="council" class="tab-content">
+            <div class="card">
+                <div class="card-header">Council of Consensus Deliberation</div>
+                <div class="card-body">
+                    <input type="text" id="council-query" class="form-control mb-3 bg-dark text-white border-secondary" placeholder="Topic for Council review...">
+                    <button class="btn btn-warning w-100 mb-3" onclick="runCouncil()">Convene the Council</button>
+                    <div id="council-results" class="row"></div>
+                    <div id="council-verdict" class="mt-3 p-3 bg-black rounded border border-warning small font-monospace" style="white-space:pre-wrap;"></div>
                 </div>
             </div>
         </div>
@@ -174,12 +215,69 @@
             document.getElementById('current-instr').value = data.new_instruction;
         }
 
+        async function runArchitect() {
+            const res = await fetch('/api/meta/architect');
+            const data = await res.json();
+            document.getElementById('architect-result').innerText = data.plan;
+        }
+
         async function runBackcast() {
             const outcome = document.getElementById('backcast-outcome').value;
             const year = document.getElementById('backcast-year').value;
             const res = await fetch('/api/meta/backcast', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({outcome, year}) });
             const data = await res.json();
             document.getElementById('backcast-result').innerText = data.roadmap;
+        }
+
+        async function runRedTeam() {
+            const finding = document.getElementById('sov-input').value;
+            const res = await fetch('/api/sovereign/red-team', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({finding}) });
+            const data = await res.json();
+            document.getElementById('sov-result').innerText = data.attack;
+        }
+
+        async function runHistory() {
+            const discovery = document.getElementById('sov-input').value;
+            const res = await fetch('/api/sovereign/history', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({discovery}) });
+            const data = await res.json();
+            document.getElementById('sov-result').innerText = data.history;
+        }
+
+        async function runIP() {
+            const discovery = document.getElementById('sov-input').value;
+            const res = await fetch('/api/sovereign/ip', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({discovery}) });
+            const data = await res.json();
+            document.getElementById('sov-result').innerHTML = `<strong>SUGGESTED NAMES:</strong><br>${data.names}<br><br><strong>THEORETICAL PATENT:</strong><br>${data.patent}`;
+        }
+
+        async function runDistill() {
+            const discovery = document.getElementById('sov-input').value;
+            const res = await fetch('/api/sovereign/distill', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({discovery}) });
+            const data = await res.json();
+            document.getElementById('sov-result').innerText = data.axiom;
+        }
+
+        async function runSerendipity() {
+            const query = document.getElementById('sov-input').value;
+            const res = await fetch('/api/sovereign/serendipity', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({query}) });
+            const data = await res.json();
+            document.getElementById('sov-result').innerHTML = `<strong>LATERAL DOMAIN: ${data.domain}</strong><br><br>${data.result}`;
+        }
+
+        async function runCouncil() {
+            const query = document.getElementById('council-query').value;
+            const res = await fetch('/api/sovereign/council', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({query}) });
+            const data = await res.json();
+            let html = "";
+            for (let p in data.deliberations) {
+                html += `<div class="col-md-6 mb-2">
+                    <div class="card p-2 bg-dark border-secondary small">
+                        <strong class="text-accent">${p.toUpperCase()}</strong><br>${data.deliberations[p].substring(0, 200)}...
+                    </div>
+                </div>`;
+            }
+            document.getElementById('council-results').innerHTML = html;
+            document.getElementById('council-verdict').innerHTML = `<strong>FINAL VERDICT:</strong><br>${data.verdict}`;
         }
 
         async function runDuel() {
