@@ -37,6 +37,7 @@ from prob.engines.council import CouncilOfConsensus
 from prob.engines.serendipity import SerendipityInjector
 from prob.engines.axiom_distiller import AxiomDistiller
 from prob.engines.neural_architect import NeuralArchitect
+from prob.engines.knowledge_graph_pro import KnowledgeGraphPro
 
 app = Flask(__name__)
 
@@ -74,6 +75,7 @@ council = CouncilOfConsensus(brain)
 serendipity = SerendipityInjector(brain)
 axiom_distiller = AxiomDistiller(brain)
 architect = NeuralArchitect(brain, memory)
+kg_pro = KnowledgeGraphPro(brain, memory)
 
 # Bootstrap Logic
 def start_autonomous_mission():
