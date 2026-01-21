@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prob AI | V12 Sovereignty Nexus</title>
+    <title>Prob AI | V13 Singularity Realized</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --sidebar-width: 240px; --bg-main: #0b0e14; --bg-card: #151921; --border-color: #2d333b; --accent: #4493f8; --thought-bg: #1c2128; --dream-purple: #8957e5; }
+        :root { --sidebar-width: 240px; --bg-main: #0b0e14; --bg-card: #151921; --border-color: #2d333b; --accent: #4493f8; --thought-bg: #1c2128; --dream-purple: #8957e5; --quantum-cyan: #00f2ff; }
         body { background-color: var(--bg-main); color: #adbac7; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; margin: 0; overflow: hidden; }
         .sidebar { background-color: var(--bg-card); min-height: 100vh; padding: 20px; border-right: 1px solid var(--border-color); position: fixed; width: var(--sidebar-width); z-index: 1000; }
         .main-content { margin-left: var(--sidebar-width); padding: 20px; display: flex; gap: 20px; height: 100vh; }
@@ -21,99 +21,58 @@
         .tab-content.active { display: block; }
         .card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 20px; }
         .card-header { border-bottom: 1px solid var(--border-color); background: transparent; color: #adbac7; font-weight: 600; font-size: 0.9rem; padding: 12px 16px; }
-        .badge-frontier { background: #347d39; color: white; font-size: 0.6rem; padding: 2px 5px; border-radius: 4px; }
-        .profile-stat { border-right: 1px solid var(--border-color); padding: 0 15px; }
-        .profile-stat:last-child { border-right: none; }
+        .btn-glow-cyan { background: transparent; border: 1px solid var(--quantum-cyan); color: var(--quantum-cyan); box-shadow: 0 0 5px var(--quantum-cyan); }
+        .btn-glow-cyan:hover { background: var(--quantum-cyan); color: black; box-shadow: 0 0 15px var(--quantum-cyan); }
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
     <div class="sidebar">
         <div class="d-flex align-items-center mb-4 ps-2">
-            <i class="fas fa-crown fa-lg text-warning me-2"></i>
-            <h5 class="mb-0 text-white">Prob <span class="text-accent">Sovereign</span></h5>
+            <i class="fas fa-atom fa-lg text-info me-2"></i>
+            <h5 class="mb-0 text-white">Prob <span class="text-accent">Singularity</span></h5>
         </div>
         <nav class="nav flex-column">
             <a class="nav-link active" onclick="showTab('research')"><i class="fas fa-microscope me-2"></i>Discovery Hub</a>
             <a class="nav-link" onclick="showTab('nexus')"><i class="fas fa-network-wired me-2"></i>External Nexus</a>
+            <a class="nav-link" onclick="showTab('sovereign')"><i class="fas fa-shield-virus me-2"></i>Sovereign Lab</a>
+            <a class="nav-link" onclick="showTab('quantum')"><i class="fas fa-microchip me-2"></i>Quantum Logic</a>
             <a class="nav-link" onclick="showTab('knowledge')"><i class="fas fa-project-diagram me-2"></i>Knowledge Map</a>
             <a class="nav-link" onclick="showTab('dreams')"><i class="fas fa-moon me-2"></i>Dream Stream</a>
-            <a class="nav-link" onclick="showTab('frontier')"><i class="fas fa-compass me-2"></i>Frontiers</a>
-            <a class="nav-link" onclick="showTab('sovereign')"><i class="fas fa-shield-virus me-2"></i>Sovereign Lab</a>
             <a class="nav-link" onclick="showTab('system')"><i class="fas fa-tools me-2"></i>System Core</a>
-            <a href="/logout" class="nav-link text-danger mt-5"><i class="fas fa-sign-out-alt me-2"></i>Terminate Session</a>
+            <a href="/logout" class="nav-link text-danger mt-5"><i class="fas fa-sign-out-alt me-2"></i>Terminate</a>
         </nav>
     </div>
 
     <div class="main-content">
-        <!-- Research Hub -->
+        <!-- Research -->
         <div id="research" class="tab-content active">
-            <!-- Bootloader -->
             <div class="card border-info mb-3">
                 <div class="card-body d-flex justify-content-between align-items-center py-2">
                     <div>
-                        <h6 class="mb-0 text-info" style="font-size:0.8rem;"><i class="fas fa-satellite-dish me-2"></i>Autonomous Bootloader</h6>
-                        <small class="text-muted" id="boot-status" style="font-size:0.65rem;">Status: Idle</small>
+                        <h6 class="mb-0 text-info"><i class="fas fa-satellite-dish me-2"></i>Autonomous Bootloader</h6>
+                        <small class="text-muted" id="boot-status">Status: Idle</small>
                     </div>
-                    <button class="btn btn-sm btn-info py-1 px-3" id="btn-bootstrap" onclick="startBootstrap()" style="font-size:0.7rem;">Birth Organism</button>
+                    <button class="btn btn-sm btn-info py-1 px-3" id="btn-bootstrap" onclick="startBootstrap()">Birth Organism</button>
                 </div>
-                <div class="progress rounded-0" style="height: 3px;">
-                    <div class="progress-bar bg-info" id="boot-progress" style="width: 0%"></div>
-                </div>
+                <div class="progress rounded-0" style="height: 3px;"><div class="progress-bar bg-info" id="boot-progress" style="width: 0%"></div></div>
             </div>
-
-            <!-- Profile Info -->
-            <div class="card mb-3">
-                <div class="card-body d-flex py-2 align-items-center">
-                    <div class="profile-stat"><small class="text-muted d-block" style="font-size:0.6rem;">RESEARCH_STYLE</small><span id="prof-style" class="small">Loading...</span></div>
-                    <div class="profile-stat"><small class="text-muted d-block" style="font-size:0.6rem;">INTERACTIONS</small><span id="prof-count" class="small">0</span></div>
-                    <div class="profile-stat flex-grow-1"><small class="text-muted d-block" style="font-size:0.6rem;">CURIOSITY_FOCUS</small><span id="prof-focus" class="small text-accent">...</span></div>
-                </div>
-            </div>
-
             <div class="card">
                 <div class="card-body">
-                    <textarea id="query" class="form-control mb-3 bg-dark text-white border-secondary small" rows="4" placeholder="Inject research inquiry or hypothesis..."></textarea>
-                    <button class="btn btn-primary w-100" onclick="ask()">Execute Sovereign Discovery</button>
+                    <textarea id="query" class="form-control mb-3 bg-dark text-white border-secondary small" rows="4" placeholder="Inject research inquiry..."></textarea>
+                    <button class="btn btn-primary w-100" onclick="ask()">Execute Discovery</button>
                 </div>
             </div>
-            <div id="results" class="card p-3 font-monospace" style="font-size:0.75rem; min-height: 150px; background: #0d1117;">Awaiting signal...</div>
+            <div id="results" class="card p-3 font-monospace small" style="min-height: 150px; background: #0d1117;">Awaiting signal...</div>
         </div>
 
-        <!-- External Nexus -->
-        <div id="nexus" class="tab-content">
+        <!-- Quantum -->
+        <div id="quantum" class="tab-content">
             <div class="card">
-                <div class="card-header">External Intelligence Nexus</div>
+                <div class="card-header">Quantum Algorithm Design</div>
                 <div class="card-body">
-                    <div class="row g-2 mb-4">
-                        <div class="col-md-4">
-                            <select id="nexus-provider" class="form-select bg-dark text-white small">
-                                <option value="gemini">Google Gemini</option>
-                                <option value="openai">OpenAI GPT</option>
-                                <option value="anthropic">Anthropic Claude</option>
-                                <option value="groq">Groq (Ultra-Fast)</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6"><input type="password" id="nexus-key" class="form-control bg-dark text-white small" placeholder="API Access Key"></div>
-                        <div class="col-md-2"><button class="btn btn-primary w-100 btn-sm" onclick="updateNexusKey()">Save</button></div>
-                    </div>
-                    <div class="input-group mb-3">
-                        <input type="text" id="nexus-prompt" class="form-control bg-dark text-white small" placeholder="Bridge query to Nexus...">
-                        <button class="btn btn-outline-info btn-sm" onclick="queryNexus()">Query</button>
-                    </div>
-                    <div id="nexus-result" class="p-3 bg-black rounded border border-info small font-monospace" style="white-space:pre-wrap; min-height:100px;"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Knowledge Map -->
-        <div id="knowledge" class="tab-content">
-            <div class="card">
-                <div class="card-header">Autonomous Relationship Mapping</div>
-                <div class="card-body text-center">
-                    <button class="btn btn-outline-primary btn-sm mb-3" onclick="evolveGraph()"><i class="fas fa-atom me-2"></i>Identify Hidden Bridges</button>
-                    <div id="graph-mission" class="mb-3 small italic text-accent font-monospace"></div>
-                    <div id="entity-nodes" class="d-flex flex-wrap justify-content-start"></div>
+                    <input type="text" id="quantum-problem" class="form-control mb-3 bg-dark text-white border-secondary small" placeholder="Problem for Quantum speedup (e.g. Molecular Simulation)">
+                    <button class="btn btn-glow-cyan w-100" onclick="runQuantum()">Design Quantum Blueprint</button>
+                    <div id="quantum-result" class="mt-3 p-3 bg-black rounded border border-info small font-monospace" style="white-space:pre-wrap;"></div>
                 </div>
             </div>
         </div>
@@ -121,17 +80,14 @@
         <!-- Sovereign Lab -->
         <div id="sovereign" class="tab-content">
             <div class="card">
-                <div class="card-header">Intel Sovereignty Engine</div>
+                <div class="card-header">Advanced Intel Sovereignty</div>
                 <div class="card-body">
-                    <textarea id="sov-input" class="form-control mb-3 bg-dark text-white border-secondary small" rows="3" placeholder="Input discovery for sovereignty processing..."></textarea>
+                    <textarea id="sov-input" class="form-control mb-3 bg-dark text-white border-secondary small" rows="3" placeholder="Paste discovery..."></textarea>
                     <div class="d-flex flex-wrap gap-2 mb-3">
-                        <button class="btn btn-danger btn-sm" onclick="runRedTeam()">Red Team Attack</button>
-                        <button class="btn btn-info btn-sm" onclick="runHistory()">Future History</button>
-                        <button class="btn btn-warning btn-sm" onclick="runIP()">IP Nexus</button>
-                        <button class="btn btn-glow-purple btn-sm" onclick="runDistill()">Distill Axiom</button>
-                        <button class="btn btn-outline-success btn-sm" onclick="designExperiment()">Design Experiment</button>
-                        <button class="btn btn-outline-warning btn-sm" onclick="runLexicon()">Coin Term</button>
-                        <button class="btn btn-outline-info btn-sm" onclick="runTemporal()">Temporal View</button>
+                        <button class="btn btn-danger btn-sm" onclick="runRedTeam()">Red Team</button>
+                        <button class="btn btn-glow-purple btn-sm" onclick="runVisualize()">Visual Prompt</button>
+                        <button class="btn btn-outline-info btn-sm" onclick="runSym()">Formalize (Math)</button>
+                        <button class="btn btn-outline-warning btn-sm" onclick="runDistill()">Distill Axiom</button>
                     </div>
                     <div id="sov-result" class="p-3 bg-black rounded border border-danger small font-monospace" style="white-space:pre-wrap; min-height:200px;"></div>
                 </div>
@@ -141,30 +97,12 @@
         <!-- System Core -->
         <div id="system" class="tab-content">
             <div class="card">
-                <div class="card-header">Hardware & Dependencies</div>
+                <div class="card-header">Sovereign Integrity</div>
                 <div class="card-body">
                     <div id="dep-list" class="small p-2 bg-black rounded mb-3"></div>
-                    <hr class="border-secondary">
-                    <h6>Version Control</h6>
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <small class="text-muted" id="update-status">Branch: main</small>
-                        <div>
-                            <button class="btn btn-outline-info btn-sm me-2" onclick="checkUpdate()">Check for Updates</button>
-                            <button class="btn btn-primary btn-sm" id="btn-apply-update" onclick="applyUpdate()" style="display:none;">Apply GitHub Update</button>
-                        </div>
-                    </div>
-                    <hr class="border-secondary">
-                    <h6>Self-Repair & Optimization</h6>
-                    <div class="d-flex gap-2 mb-3">
-                        <button class="btn btn-outline-warning btn-sm flex-grow-1" onclick="runRepair()">Autonomous System Fix</button>
-                        <button class="btn btn-outline-danger btn-sm flex-grow-1" onclick="runArchitect()">Propose Neural Update</button>
-                        <button class="btn btn-outline-info btn-sm flex-grow-1" onclick="proposeCollab()">Propose Collab</button>
-                    </div>
-                    <hr class="border-secondary">
-                    <h6>Sovereign Terminal</h6>
+                    <button class="btn btn-outline-success btn-sm w-100 mb-3" onclick="updateWiki()">Generate Knowledge Wiki</button>
                     <div class="input-group mb-2">
-                        <span class="input-group-text bg-dark text-success border-secondary">$</span>
-                        <input type="text" id="term-input" class="form-control bg-black text-white border-secondary small font-monospace" placeholder="Enter shell command...">
+                        <input type="text" id="term-input" class="form-control bg-black text-white border-secondary small font-monospace" placeholder="Shell Command...">
                         <button class="btn btn-outline-secondary btn-sm" onclick="runTerminal()">Exec</button>
                     </div>
                     <div id="system-log" class="small p-2 bg-black rounded font-monospace" style="max-height: 200px; overflow-y: auto;"></div>
@@ -172,29 +110,14 @@
             </div>
         </div>
 
-        <!-- Hidden tabs logic handled in JS -->
-        <div id="dreams" class="tab-content">
-            <h6 class="mb-3 text-white"><i class="fas fa-moon text-purple me-2"></i>Idle Combinatorial Innovation</h6>
-            <div id="dream-list"></div>
-        </div>
-        <div id="frontier" class="tab-content">
-             <div class="card">
-                <div class="card-header">Epistemic Frontier Mapping</div>
-                <div class="card-body">
-                    <input type="text" id="frontier-topic" class="form-control mb-3 bg-dark text-white border-secondary small" placeholder="Topic boundary...">
-                    <button class="btn btn-success btn-sm w-100" onclick="getFrontier()">Map The Unknown</button>
-                    <div id="frontier-result" class="mt-3 p-3 bg-black rounded border border-success small font-monospace"></div>
-                </div>
-            </div>
-        </div>
-        <div id="backcast" class="tab-content"></div> <!-- Hidden for space but functional -->
+        <!-- Knowledge Map, Nexus, etc -->
+        <div id="nexus" class="tab-content"></div>
+        <div id="knowledge" class="tab-content"></div>
+        <div id="dreams" class="tab-content"></div>
 
         <!-- Thought Stream Sidebar -->
         <div class="thought-stream">
-            <div class="thought-header">
-                <span>Neural Trace</span>
-                <span class="badge bg-success" style="font-size:0.5rem;">Sovereign_Active</span>
-            </div>
+            <div class="thought-header"><span>Neural Trace</span><span class="badge bg-info">V13_SINGULARITY</span></div>
             <div class="thought-body" id="thought-log"></div>
         </div>
     </div>
@@ -204,106 +127,41 @@
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            const activeLink = Array.from(document.querySelectorAll('.nav-link')).find(l => l.onclick.toString().includes(id));
-            if(activeLink) activeLink.classList.add('active');
-            if(id === 'dreams') updateDreams();
-            if(id === 'knowledge') loadGraph();
+            event.target.closest('.nav-link').classList.add('active');
         }
 
         async function ask() {
             const query = document.getElementById('query').value;
-            addThought("user", `Querying: ${query}`);
             const res = await fetch('/api/ask', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({query}) });
             const data = await res.json();
             document.getElementById('results').innerText = data.result;
-            updateProfile();
         }
 
-        async function updateProfile() {
-            const res = await fetch('/api/profile');
+        async function runQuantum() {
+            const problem = document.getElementById('quantum-problem').value;
+            const res = await fetch('/api/sovereign/quantum', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({problem}) });
             const data = await res.json();
-            document.getElementById('prof-style').innerText = data.research_style;
-            document.getElementById('prof-count').innerText = data.interaction_count;
-            document.getElementById('prof-focus').innerText = data.curiosity_focus.slice(-3).join(", ");
+            document.getElementById('quantum-result').innerText = data.blueprint;
         }
 
-        async function updateNexusKey() {
-            const service = document.getElementById('nexus-provider').value;
-            const key = document.getElementById('nexus-key').value;
-            await fetch('/api/nexus/keys', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({service, key}) });
-            alert("Sovereignty Key Stored.");
-        }
-
-        async function queryNexus() {
-            const service = document.getElementById('nexus-provider').value;
-            const prompt = document.getElementById('nexus-prompt').value;
-            const res = await fetch('/api/nexus/query', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({service, prompt}) });
-            const data = await res.json();
-            document.getElementById('nexus-result').innerText = data.result;
-        }
-
-        async function startBootstrap() {
-            document.getElementById('btn-bootstrap').disabled = true;
-            await fetch('/api/brain/bootstrap', { method: 'POST' });
-        }
-
-        async function updateBootStatus() {
-            const res = await fetch('/api/brain/status');
-            const data = await res.json();
-            const bar = document.getElementById('boot-progress');
-            const text = document.getElementById('boot-status');
-            bar.style.width = data.progress + "%";
-            text.innerText = `Status: ${data.status.toUpperCase()} (${data.progress}%)`;
-            if (data.status === 'mission_active') {
-                document.getElementById('btn-bootstrap').classList.replace('btn-info', 'btn-success');
-                document.getElementById('btn-bootstrap').innerText = "AUTO-PILOT ACTIVE";
-                document.getElementById('btn-bootstrap').disabled = true;
-            }
-        }
-
-        async function loadGraph() {
-            const res = await fetch('/api/graph');
-            const data = await res.json();
-            let html = "";
-            data.nodes.forEach(n => {
-                html += `<div class="badge border border-info m-1 p-2 small"><i class="fas fa-circle text-primary me-1" style="font-size:0.4rem;"></i>${n.id}</div>`;
-            });
-            document.getElementById('entity-nodes').innerHTML = html;
-        }
-
-        async function evolveGraph() {
-            const res = await fetch('/api/graph/evolve', { method: 'POST' });
-            const data = await res.json();
-            document.getElementById('graph-mission').innerText = data.mission;
-            loadGraph();
-        }
-
-        async function runRedTeam() {
-            const finding = document.getElementById('sov-input').value;
-            const res = await fetch('/api/sovereign/red-team', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({finding}) });
-            const data = await res.json();
-            document.getElementById('sov-result').innerText = data.attack;
-        }
-
-        async function runLexicon() {
+        async function runVisualize() {
             const discovery = document.getElementById('sov-input').value;
-            const res = await fetch('/api/sovereign/lexicon', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({discovery}) });
+            const res = await fetch('/api/sovereign/visualize', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({discovery}) });
             const data = await res.json();
-            document.getElementById('sov-result').innerText = data.result;
+            document.getElementById('sov-result').innerText = data.prompt;
         }
 
-        async function runTemporal() {
-            const query = document.getElementById('sov-input').value;
-            const year = prompt("Enter Year for Historical Perspective:", "1950");
-            const res = await fetch('/api/sovereign/temporal', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({query, year}) });
+        async function runSym() {
+            const discovery = document.getElementById('sov-input').value;
+            const res = await fetch('/api/sovereign/sym/formalize', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({discovery}) });
             const data = await res.json();
-            document.getElementById('sov-result').innerHTML = `<strong>HISTORICAL PERSPECTIVE (${year}):</strong><br>${data.result}`;
+            document.getElementById('sov-result').innerText = data.formalization;
         }
 
-        async function proposeCollab() {
-            const res = await fetch('/api/meta/propose-collaboration', { method: 'POST' });
+        async function updateWiki() {
+            const res = await fetch('/api/sovereign/wiki/update', { method: 'POST' });
             const data = await res.json();
-            document.getElementById('system-log').innerText = data.proposal;
+            alert("Wiki generated at: " + data.path);
         }
 
         async function runTerminal() {
@@ -313,48 +171,20 @@
             document.getElementById('system-log').innerText = data.output;
         }
 
-        function addThought(agent, msg) {
-            const log = document.getElementById('thought-log');
-            const div = document.createElement('div');
-            div.style.marginBottom = "10px";
-            div.style.borderLeft = "2px solid #4493f8";
-            div.style.paddingLeft = "10px";
-            div.innerHTML = `<div style="color:#4493f8; font-weight:bold; font-size: 0.6rem;">${agent.toUpperCase()}</div><div style="margin-top:2px;">${msg}</div>`;
-            log.appendChild(div);
-            log.scrollTop = log.scrollHeight;
-        }
-
-        async function updateDeps() {
-            const res = await fetch('/api/system/dependencies');
+        async function pollThoughts() {
+            const res = await fetch('/api/thoughts');
             const data = await res.json();
             let html = "";
-            for (let pkg in data) {
-                html += `<div><i class="fas fa-${data[pkg] ? 'check-circle text-success' : 'times-circle text-danger'} me-2"></i>${pkg}</div>`;
-            }
-            document.getElementById('dep-list').innerHTML = html;
+            data.forEach(t => {
+                html += `<div style="margin-bottom:10px; border-left: 2px solid #4493f8; padding-left: 10px;">
+                    <div style="color:#4493f8; font-weight:bold; font-size: 0.6rem;">${t.agent.toUpperCase()}</div>
+                    <div style="margin-top:2px;">${t.msg}</div>
+                </div>`;
+            });
+            document.getElementById('thought-log').innerHTML = html;
         }
 
-        async function checkUpdate() {
-            const res = await fetch('/api/system/update/check');
-            const data = await res.json();
-            document.getElementById('update-status').innerText = data.message;
-            if (data.available) {
-                document.getElementById('btn-apply-update').style.display = 'inline-block';
-            }
-        }
-
-        async function applyUpdate() {
-            if (!confirm("This will pull latest changes from GitHub and stash local edits. Proceed?")) return;
-            const res = await fetch('/api/system/update/apply', { method: 'POST' });
-            const data = await res.json();
-            alert(data.message);
-            if (data.success) location.reload();
-        }
-
-        setInterval(updateBootStatus, 3000);
-        setInterval(updateDeps, 10000);
-        updateDeps();
-        updateProfile();
+        setInterval(pollThoughts, 2000);
     </script>
 </body>
 </html>

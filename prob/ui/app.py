@@ -46,6 +46,10 @@ from prob.engines.update_engine import UpdateEngine
 from prob.engines.temporal_anchor import TemporalAnchorEngine
 from prob.engines.lexicon import LexiconCreator
 from prob.engines.collaboration_hub import CollaborationHub
+from prob.engines.visualizer import VisualizerEngine
+from prob.engines.quantum_logic import QuantumLogicEngine
+from prob.engines.wiki_engine import WikiEngine
+from prob.engines.sym_engine import SymEngine
 
 app = Flask(__name__)
 app.secret_key = os.getenv("PROB_SECRET_KEY", secrets.token_hex(32))
@@ -93,6 +97,17 @@ updater = UpdateEngine()
 temporal = TemporalAnchorEngine(brain)
 lexicon = LexiconCreator(brain)
 collab_hub = CollaborationHub(brain, memory)
+visualizer = VisualizerEngine(brain)
+quantum = QuantumLogicEngine(brain)
+wiki = WikiEngine(memory)
+sym = SymEngine(brain)
+
+# Real-time Thought Stream
+thought_buffer = []
+
+def add_thought(agent, msg):
+    thought_buffer.append({"agent": agent, "msg": msg, "time": time.time()})
+    if len(thought_buffer) > 50: thought_buffer.pop(0)
 
 # Security Decorator
 def login_required(f):
@@ -133,10 +148,35 @@ def check_api_auth():
 @app.route('/api/ask', methods=['POST'])
 def ask():
     query = request.json.get('query')
+    add_thought("user", f"Query: {query[:30]}")
     contextual_query = profile.get_contextual_prompt(query)
     response = brain.reason(contextual_query)
     profile.analyze_interaction(query, response)
+    add_thought("brain", "Reasoning complete.")
     return jsonify({"result": response})
+
+@app.route('/api/sovereign/visualize', methods=['POST'])
+def run_visualizer():
+    discovery = request.json.get('discovery')
+    res = visualizer.imagine_discovery(discovery)
+    return jsonify({"prompt": res})
+
+@app.route('/api/sovereign/quantum', methods=['POST'])
+def run_quantum():
+    problem = request.json.get('problem')
+    res = quantum.design_quantum_algorithm(problem)
+    return jsonify({"blueprint": res})
+
+@app.route('/api/sovereign/wiki/update', methods=['POST'])
+def update_wiki():
+    res = wiki.update_wiki()
+    return jsonify({"path": res})
+
+@app.route('/api/sovereign/sym/formalize', methods=['POST'])
+def run_sym():
+    discovery = request.json.get('discovery')
+    res = sym.formalize_discovery(discovery)
+    return jsonify({"formalization": res})
 
 @app.route('/api/profile')
 def get_profile():
@@ -167,28 +207,12 @@ def run_critique():
     res = critique.critique(finding)
     return jsonify({"critique": res})
 
-@app.route('/api/critique/debate', methods=['POST'])
-def run_debate():
-    finding = request.json.get('finding')
-    res = critique.debate(finding)
-    return jsonify(res)
-
 @app.route('/api/nexus/query', methods=['POST'])
 def nexus_query():
     service = request.json.get('service')
     prompt = request.json.get('prompt')
     result = nexus.query_external(service, prompt)
     return jsonify({"result": result})
-
-@app.route('/api/nexus/keys', methods=['GET', 'POST'])
-def nexus_keys():
-    if request.method == 'POST':
-        service = request.json.get('service')
-        key = request.json.get('key')
-        nexus.update_key(service, key)
-        return jsonify({"status": "updated"})
-    safe_services = {s: {"enabled": v["enabled"]} for s, v in nexus.services.items()}
-    return jsonify(safe_services)
 
 @app.route('/api/duel/run', methods=['POST'])
 def run_duel():
@@ -198,7 +222,7 @@ def run_duel():
 
 @app.route('/api/thoughts')
 def get_thoughts():
-    return jsonify([])
+    return jsonify(thought_buffer)
 
 @app.route('/api/meta/dreams')
 def get_dreams():
@@ -260,24 +284,6 @@ def run_distill():
     res = axiom_distiller.distill(discovery)
     return jsonify({"axiom": res})
 
-@app.route('/api/sovereign/temporal', methods=['POST'])
-def run_temporal():
-    query = request.json.get('query')
-    year = request.json.get('year', 1950)
-    res = temporal.simulate_era_thought(query, year)
-    return jsonify({"result": res})
-
-@app.route('/api/sovereign/lexicon', methods=['POST'])
-def run_lexicon():
-    discovery = request.json.get('discovery')
-    res = lexicon.coin_term(discovery)
-    return jsonify({"result": res})
-
-@app.route('/api/meta/propose-collaboration', methods=['POST'])
-def propose_collaboration():
-    res = collab_hub.propose_collaboration()
-    return jsonify({"proposal": res})
-
 @app.route('/api/meta/architect')
 def run_architect():
     res = architect.propose_correction_plan()
@@ -315,11 +321,6 @@ def sovereign_terminal():
 @app.route('/api/graph')
 def graph():
     return jsonify(memory.get_knowledge_graph())
-
-@app.route('/api/graph/evolve', methods=['POST'])
-def evolve_graph():
-    res = kg_pro.find_missing_links()
-    return jsonify({"mission": res})
 
 @app.route('/api/health')
 def health():
