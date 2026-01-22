@@ -47,6 +47,8 @@ from prob.engines.temporal_anchor import TemporalAnchorEngine
 from prob.engines.lexicon import LexiconCreator
 from prob.engines.collaboration_hub import CollaborationHub
 from prob.engines.visualizer import VisualizerEngine
+from prob.engines.kill_switch import KillSwitchEngine
+from prob.engines.understand import UnderstandEngine
 from prob.engines.quantum_logic import QuantumLogicEngine
 from prob.engines.wiki_engine import WikiEngine
 from prob.engines.sym_engine import SymEngine
@@ -98,6 +100,8 @@ temporal = TemporalAnchorEngine(brain)
 lexicon = LexiconCreator(brain)
 collab_hub = CollaborationHub(brain, memory)
 visualizer = VisualizerEngine(brain)
+kill_switch = KillSwitchEngine(swarm)
+understand_engine = UnderstandEngine(brain, memory, profile)
 quantum = QuantumLogicEngine(brain)
 wiki = WikiEngine(memory)
 sym = SymEngine(brain)

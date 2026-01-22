@@ -33,6 +33,7 @@
         </div>
         <nav class="nav flex-column">
             <a class="nav-link active" onclick="showTab('research')"><i class="fas fa-microscope me-2"></i>Discovery Hub</a>
+            <a class="nav-link" onclick="showTab('understand')"><i class="fas fa-eye me-2"></i>Understand</a>
             <a class="nav-link" onclick="showTab('nexus')"><i class="fas fa-network-wired me-2"></i>External Nexus</a>
             <a class="nav-link" onclick="showTab('sovereign')"><i class="fas fa-shield-virus me-2"></i>Sovereign Lab</a>
             <a class="nav-link" onclick="showTab('quantum')"><i class="fas fa-microchip me-2"></i>Quantum Logic</a>
@@ -44,6 +45,17 @@
     </div>
 
     <div class="main-content">
+        <!-- Understand -->
+        <div id="understand" class="tab-content">
+            <div class="card border-primary">
+                <div class="card-header"><i class="fas fa-eye me-2"></i>Neural Self-Reflection</div>
+                <div class="card-body">
+                    <button class="btn btn-primary w-100 mb-3" onclick="runUnderstand()">Sync Consciousness</button>
+                    <div id="understand-result" class="p-3 bg-black rounded small font-monospace" style="white-space:pre-wrap;">Prob is analyzing its own existence...</div>
+                </div>
+            </div>
+        </div>
+
         <!-- Research -->
         <div id="research" class="tab-content active">
             <div class="card border-info mb-3">
@@ -101,10 +113,13 @@
                 <div class="card-body">
                     <div id="dep-list" class="small p-2 bg-black rounded mb-3"></div>
                     <button class="btn btn-outline-success btn-sm w-100 mb-3" onclick="updateWiki()">Generate Knowledge Wiki</button>
-                    <div class="input-group mb-2">
+                    <div class="input-group mb-4">
                         <input type="text" id="term-input" class="form-control bg-black text-white border-secondary small font-monospace" placeholder="Shell Command...">
                         <button class="btn btn-outline-secondary btn-sm" onclick="runTerminal()">Exec</button>
                     </div>
+                    <hr class="border-danger">
+                    <h6 class="text-danger">Emergency Protocol</h6>
+                    <button class="btn btn-danger w-100" onclick="activateKillSwitch()"><i class="fas fa-skull me-2"></i>ACTIVATE KILL SWITCH</button>
                     <div id="system-log" class="small p-2 bg-black rounded font-monospace" style="max-height: 200px; overflow-y: auto;"></div>
                 </div>
             </div>
