@@ -1,6 +1,9 @@
 import json
 import os
-import psutil
+try:
+    import psutil
+except ImportError:
+    psutil = None
 try:
     import torch
 except ImportError:
@@ -15,10 +18,14 @@ class ModelSelector:
         hardware = {
             "vram": 0,
             "has_gpu": False,
-            "ram": psutil.virtual_memory().total / (1024**3),
+            "ram": 0,
             "cpus": os.cpu_count(),
             "cuda_version": None
         }
+
+        if psutil:
+            hardware["ram"] = psutil.virtual_memory().total / (1024**3)
+
         if torch and torch.cuda.is_available():
             hardware["has_gpu"] = True
             hardware["vram"] = torch.cuda.get_device_properties(0).total_memory / (1024**3)

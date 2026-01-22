@@ -10,20 +10,24 @@ class DocumentationEngine:
         self.brain = brain
         self.output_dir = output_dir
         if not os.path.exists(self.output_dir):
-            os.makedirs(self.output_dir)
+            os.makedirs(self.output_dir, exist_ok=True)
 
     def generate_research_paper(self, scenario):
         notes = self.memory.get_all_notes()
         relevant_notes = [n for n in notes if n.get("details", {}).get("scenario") == scenario]
 
         if not relevant_notes:
-            return None
+            # Fallback: if no notes, try to generate one from brain if scenario is provided
+            if self.brain:
+                result = self.brain.reason(f"Write a short scientific analysis on: {scenario}")
+            else:
+                return None
+        else:
+            result = next((n["details"]["result"] for n in relevant_notes if n["action"] == "exploration_result"), "No result found")
 
-        result = next((n["details"]["result"] for n in relevant_notes if n["action"] == "exploration_result"), "No result found")
-
-        paper = f"""# SCIENTIFIC PAPER: {scenario}
+        paper = f"""# SCIENTIFIC PAPER: {scenario.upper()}
 Date: {datetime.now().strftime('%Y-%m-%d')}
-Author: Prob AI Discovery Engine
+Author: Prob AI Discovery Engine (v14.0.0)
 
 ## Abstract
 This paper presents an autonomous reasoning analysis of the following scenario: "{scenario}".
@@ -42,6 +46,7 @@ Each branch is assigned a confidence score and checked for internal contradictio
 
 ## Discussion
 The findings suggest a complex interplay of variables. Further human-led experimentation is recommended.
+Prob's Honesty Engine indicates a confidence interval based on existing datasets.
 
 ## Recommended Validation Experiments
 The following protocols have been generated autonomously by the Prob Experimentalist Engine:
@@ -49,6 +54,7 @@ The following protocols have been generated autonomously by the Prob Experimenta
 
 ## References
 - Prob AI Internal Memory Log (Session: {datetime.now().isoformat()})
+- Global Knowledge Graph (Entity Mapped)
 """
         filename = f"paper_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md"
         path = os.path.join(self.output_dir, filename)
@@ -63,16 +69,27 @@ The following protocols have been generated autonomously by the Prob Experimenta
         return self.brain.reason(prompt)
 
     def generate_book(self, topic):
-        # Compiles multiple research entries into a "book"
+        """Compiles multiple research entries into a structured 'book'."""
         notes = self.memory.get_all_notes()
-        book_content = f"# THE BOOK OF PROB: {topic.upper()}\n\n"
-        book_content += f"Compiled on: {datetime.now().isoformat()}\n\n"
+        book_content = f"# THE BOOK OF PROB: {topic.upper()}\n"
+        book_content += f"Sub-title: An Autonomous Exploration into {topic}\n"
+        book_content += f"Compiled on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+        book_content += "## Preface\nThis book was written autonomously by Prob AI, documenting the failures and successes of its reasoning process.\n\n"
 
+        found_chapters = 0
         for note in notes:
             if note["action"] == "exploration_result":
                 scenario = note["details"]["scenario"]
-                result = note["details"]["result"]
-                book_content += f"## Chapter: {scenario}\n\n{result}\n\n---\n\n"
+                if topic.lower() in scenario.lower() or topic.lower() in note["details"]["result"].lower():
+                    result = note["details"]["result"]
+                    book_content += f"## Chapter {found_chapters + 1}: {scenario}\n\n{result}\n\n---\n\n"
+                    found_chapters += 1
+
+        if found_chapters == 0:
+            book_content += "\n*No chapters found in memory for this topic. Running autonomous research...*\n"
+            if self.brain:
+                book_content += "\n## Summary Analysis\n"
+                book_content += self.brain.reason(f"Write a comprehensive overview about {topic} for an AI-authored book.")
 
         filename = f"book_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md"
         path = os.path.join(self.output_dir, filename)

@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+prob/output/docs/*
+prob/memory/*.json
+!prob/memory/repair_log.json
+prob/memory/vault/*.json
+prob/memory/__pycache__/
+prob/brain/__pycache__/
+prob/ui/__pycache__/
+prob/utils/__pycache__/
+prob/cli/__pycache__/
+prob/scripts/__pycache__/
+prob/engines/__pycache__/

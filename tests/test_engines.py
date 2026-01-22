@@ -24,7 +24,7 @@ class TestEngines(unittest.TestCase):
         self.assertTrue(os.path.exists(book_path))
 
         # Honesty eval
-        eval_res = honesty.evaluate(result)
+        res_text, eval_res = honesty.evaluate(scenario, result)
         self.assertIn("confidence", eval_res)
 
         # Cleanup

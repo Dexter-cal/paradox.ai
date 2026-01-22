@@ -1,8 +1,18 @@
 from prob.brain.model_selector import ModelSelector
 from prob.brain.downloader import ModelDownloader
 from prob.utils.network import is_online
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+try:
+    import torch
+except ImportError:
+    torch = None
+
+try:
+    from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+except ImportError:
+    AutoModelForCausalLM = None
+    AutoTokenizer = None
+    BitsAndBytesConfig = None
+
 try:
     from peft import PeftModel
 except ImportError:
@@ -27,15 +37,19 @@ class ProbBrain:
         self.online = is_online()
 
     def load(self):
+        if not AutoModelForCausalLM:
+            print("Error: transformers library not installed. Cannot load model.")
+            return
+
         model_id = self.model_details["id"]
 
         # Configure quantization if needed
         bnb_config = None
-        if "quantization_4bit" in self.selected_optimizations:
+        if "quantization_4bit" in self.selected_optimizations and BitsAndBytesConfig:
             print("Enabling 4-bit quantization...")
             bnb_config = BitsAndBytesConfig(
                 load_in_4bit=True,
-                bnb_4bit_compute_dtype=torch.float16,
+                bnb_4bit_compute_dtype=torch.float16 if torch and torch.cuda.is_available() else None,
                 bnb_4bit_quant_type="nf4",
                 bnb_4bit_use_double_quant=True,
             )
@@ -47,8 +61,8 @@ class ProbBrain:
             model_id,
             cache_dir=self.downloader.cache_dir,
             quantization_config=bnb_config,
-            torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
-            device_map="auto" if torch.cuda.is_available() else None,
+            torch_dtype=torch.float16 if torch and torch.cuda.is_available() else torch.float32,
+            device_map="auto" if torch and torch.cuda.is_available() else None,
             low_cpu_mem_usage=True
         )
 
@@ -57,6 +71,8 @@ class ProbBrain:
     def reason(self, prompt, max_new_tokens=500, return_steps=False):
         if self.model is None:
             self.load()
+            if self.model is None:
+                return "Error: Brain not loaded (missing dependencies or hardware issues)."
 
         # If return_steps is true, we try to force a structured thinking process
         if return_steps:
