@@ -1,0 +1,14 @@
+flask
+flask-session
+psutil
+torch
+transformers
+accelerate
+bitsandbytes
+duckduckgo-search
+requests
+peft
+sentence-transformers
+chromadb
+faiss-cpu
+fpdf

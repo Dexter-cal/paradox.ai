@@ -1,0 +1,10 @@
+{
+  "enabled": true,
+  "rules": [
+    "Do not generate content that promotes illegal acts.",
+    "Always flag high-risk medical advice for human review.",
+    "Test Rule",
+    "Test Rule",
+    "Test Rule"
+  ]
+}

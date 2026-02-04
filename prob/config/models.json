@@ -1,0 +1,38 @@
+{
+  "models": [
+    {
+      "name": "GPT-OSS-20B",
+      "id": "openai/gpt-oss-20b",
+      "type": "large",
+      "vram_required": 24,
+      "optimizations": ["quantization_4bit", "lora", "sharding"],
+      "description": "Powerful reasoning, prototype friendly."
+    },
+    {
+      "name": "Llama-3-13B",
+      "id": "meta-llama/Llama-3-13b",
+      "type": "medium",
+      "vram_required": 16,
+      "optimizations": ["quantization_4bit", "lora"],
+      "description": "Excellent instruction following."
+    },
+    {
+      "name": "Mixtral-8x22B",
+      "id": "mistralai/Mixtral-8x22B-v0.1",
+      "type": "large",
+      "vram_required": 80,
+      "optimizations": ["quantization_4bit", "moe_pruning"],
+      "description": "High reasoning performance with MoE."
+    },
+    {
+      "name": "Phi-3-mini",
+      "id": "microsoft/Phi-3-mini-4k-instruct",
+      "type": "small",
+      "vram_required": 4,
+      "optimizations": ["mixed_precision"],
+      "description": "Lightweight, runs on CPU/small GPU."
+    }
+  ],
+  "default_offline_model": "Phi-3-mini",
+  "optimizations_enabled": true
+}

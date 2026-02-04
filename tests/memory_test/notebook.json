@@ -1,0 +1,23 @@
+[
+  {
+    "timestamp": "2026-01-20T16:25:17.709627",
+    "action": "test",
+    "details": {
+      "foo": "bar"
+    }
+  },
+  {
+    "timestamp": "2026-01-20T16:26:13.924524",
+    "action": "test",
+    "details": {
+      "foo": "bar"
+    }
+  },
+  {
+    "timestamp": "2026-01-20T16:27:33.862589",
+    "action": "test",
+    "details": {
+      "foo": "bar"
+    }
+  }
+]

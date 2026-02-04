@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prob AI | V13 Singularity Realized</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --sidebar-width: 240px; --bg-main: #0b0e14; --bg-card: #151921; --border-color: #2d333b; --accent: #4493f8; --thought-bg: #1c2128; --dream-purple: #8957e5; --quantum-cyan: #00f2ff; }
+        body { background-color: var(--bg-main); color: #adbac7; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; margin: 0; overflow: hidden; }
+        .sidebar { background-color: var(--bg-card); min-height: 100vh; padding: 20px; border-right: 1px solid var(--border-color); position: fixed; width: var(--sidebar-width); z-index: 1000; }
+        .main-content { margin-left: var(--sidebar-width); padding: 20px; display: flex; gap: 20px; height: 100vh; }
+        .thought-stream { width: 350px; background: var(--thought-bg); border-left: 1px solid var(--border-color); height: 100vh; display: flex; flex-direction: column; position: fixed; right: 0; top: 0; }
+        .thought-header { padding: 15px; border-bottom: 1px solid var(--border-color); background: #22272e; font-weight: bold; font-size: 0.75rem; text-transform: uppercase; color: #768390; display: flex; justify-content: space-between; }
+        .thought-body { flex: 1; overflow-y: auto; padding: 15px; font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; font-size: 0.7rem; line-height: 1.4; }
+        .nav-link { color: #768390; margin-bottom: 8px; cursor: pointer; display: flex; align-items: center; padding: 10px; border-radius: 6px; text-decoration: none !important; }
+        .nav-link:hover { color: #adbac7; background: #22272e; }
+        .nav-link.active { color: var(--accent); background: #22272e; border-left: 3px solid var(--accent); }
+        .tab-content { display: none; width: calc(100% - 350px); overflow-y: auto; padding-bottom: 50px; }
+        .tab-content.active { display: block; }
+        .card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 20px; }
+        .card-header { border-bottom: 1px solid var(--border-color); background: transparent; color: #adbac7; font-weight: 600; font-size: 0.9rem; padding: 12px 16px; }
+        .btn-glow-cyan { background: transparent; border: 1px solid var(--quantum-cyan); color: var(--quantum-cyan); box-shadow: 0 0 5px var(--quantum-cyan); }
+        .btn-glow-cyan:hover { background: var(--quantum-cyan); color: black; box-shadow: 0 0 15px var(--quantum-cyan); }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="d-flex align-items-center mb-4 ps-2">
+            <i class="fas fa-atom fa-lg text-info me-2"></i>
+            <h5 class="mb-0 text-white">Prob <span class="text-accent">Singularity</span></h5>
+        </div>
+        <nav class="nav flex-column">
+            <a class="nav-link active" onclick="showTab('research')"><i class="fas fa-microscope me-2"></i>Discovery Hub</a>
+            <a class="nav-link" onclick="showTab('understand')"><i class="fas fa-eye me-2"></i>Understand</a>
+            <a class="nav-link" onclick="showTab('nexus')"><i class="fas fa-network-wired me-2"></i>External Nexus</a>
+            <a class="nav-link" onclick="showTab('sovereign')"><i class="fas fa-shield-virus me-2"></i>Sovereign Lab</a>
+            <a class="nav-link" onclick="showTab('quantum')"><i class="fas fa-microchip me-2"></i>Quantum Logic</a>
+            <a class="nav-link" onclick="showTab('knowledge')"><i class="fas fa-project-diagram me-2"></i>Knowledge Map</a>
+            <a class="nav-link" onclick="showTab('dreams')"><i class="fas fa-moon me-2"></i>Dream Stream</a>
+            <a class="nav-link" onclick="showTab('system')"><i class="fas fa-tools me-2"></i>System Core</a>
+            <a href="/logout" class="nav-link text-danger mt-5"><i class="fas fa-sign-out-alt me-2"></i>Terminate</a>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <!-- Understand -->
+        <div id="understand" class="tab-content">
+            <div class="card border-primary">
+                <div class="card-header"><i class="fas fa-eye me-2"></i>Neural Self-Reflection</div>
+                <div class="card-body">
+                    <button class="btn btn-primary w-100 mb-3" onclick="runUnderstand()">Sync Consciousness</button>
+                    <div id="understand-result" class="p-3 bg-black rounded small font-monospace" style="white-space:pre-wrap;">Prob is analyzing its own existence...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Research -->
+        <div id="research" class="tab-content active">
+            <div class="card border-info mb-3">
+                <div class="card-body d-flex justify-content-between align-items-center py-2">
+                    <div>
+                        <h6 class="mb-0 text-info"><i class="fas fa-satellite-dish me-2"></i>Autonomous Bootloader</h6>
+                        <small class="text-muted" id="boot-status">Status: Idle</small>
+                    </div>
+                    <button class="btn btn-sm btn-info py-1 px-3" id="btn-bootstrap" onclick="startBootstrap()">Birth Organism</button>
+                </div>
+                <div class="progress rounded-0" style="height: 3px;"><div class="progress-bar bg-info" id="boot-progress" style="width: 0%"></div></div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <textarea id="query" class="form-control mb-3 bg-dark text-white border-secondary small" rows="4" placeholder="Inject research inquiry..."></textarea>
+                    <button class="btn btn-primary w-100" onclick="ask()">Execute Discovery</button>
+                </div>
+            </div>
+            <div id="results" class="card p-3 font-monospace small" style="min-height: 150px; background: #0d1117;">Awaiting signal...</div>
+        </div>
+
+        <!-- Quantum -->
+        <div id="quantum" class="tab-content">
+            <div class="card">
+                <div class="card-header">Quantum Algorithm Design</div>
+                <div class="card-body">
+                    <input type="text" id="quantum-problem" class="form-control mb-3 bg-dark text-white border-secondary small" placeholder="Problem for Quantum speedup (e.g. Molecular Simulation)">
+                    <button class="btn btn-glow-cyan w-100" onclick="runQuantum()">Design Quantum Blueprint</button>
+                    <div id="quantum-result" class="mt-3 p-3 bg-black rounded border border-info small font-monospace" style="white-space:pre-wrap;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sovereign Lab -->
+        <div id="sovereign" class="tab-content">
+            <div class="card">
+                <div class="card-header">Advanced Intel Sovereignty</div>
+                <div class="card-body">
+                    <textarea id="sov-input" class="form-control mb-3 bg-dark text-white border-secondary small" rows="3" placeholder="Paste discovery..."></textarea>
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <button class="btn btn-danger btn-sm" onclick="runRedTeam()">Red Team</button>
+                        <button class="btn btn-glow-purple btn-sm" onclick="runVisualize()">Visual Prompt</button>
+                        <button class="btn btn-outline-info btn-sm" onclick="runSym()">Formalize (Math)</button>
+                        <button class="btn btn-outline-warning btn-sm" onclick="runDistill()">Distill Axiom</button>
+                    </div>
+                    <div id="sov-result" class="p-3 bg-black rounded border border-danger small font-monospace" style="white-space:pre-wrap; min-height:200px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Core -->
+        <div id="system" class="tab-content">
+            <div class="card">
+                <div class="card-header">Sovereign Integrity</div>
+                <div class="card-body">
+                    <div id="dep-list" class="small p-2 bg-black rounded mb-3"></div>
+                    <button class="btn btn-outline-success btn-sm w-100 mb-3" onclick="updateWiki()">Generate Knowledge Wiki</button>
+                    <div class="input-group mb-4">
+                        <input type="text" id="term-input" class="form-control bg-black text-white border-secondary small font-monospace" placeholder="Shell Command...">
+                        <button class="btn btn-outline-secondary btn-sm" onclick="runTerminal()">Exec</button>
+                    </div>
+                    <hr class="border-danger">
+                    <h6 class="text-danger">Emergency Protocol</h6>
+                    <button class="btn btn-danger w-100" onclick="activateKillSwitch()"><i class="fas fa-skull me-2"></i>ACTIVATE KILL SWITCH</button>
+                    <div id="system-log" class="small p-2 bg-black rounded font-monospace" style="max-height: 200px; overflow-y: auto;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Knowledge Map, Nexus, etc -->
+        <div id="nexus" class="tab-content"></div>
+        <div id="knowledge" class="tab-content"></div>
+        <div id="dreams" class="tab-content"></div>
+
+        <!-- Thought Stream Sidebar -->
+        <div class="thought-stream">
+            <div class="thought-header"><span>Neural Trace</span><span class="badge bg-info">V13_SINGULARITY</span></div>
+            <div class="thought-body" id="thought-log"></div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(id) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            event.target.closest('.nav-link').classList.add('active');
+        }
+
+        async function ask() {
+            const query = document.getElementById('query').value;
+            const res = await fetch('/api/ask', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({query}) });
+            const data = await res.json();
+            document.getElementById('results').innerText = data.result;
+        }
+
+        async function runQuantum() {
+            const problem = document.getElementById('quantum-problem').value;
+            const res = await fetch('/api/sovereign/quantum', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({problem}) });
+            const data = await res.json();
+            document.getElementById('quantum-result').innerText = data.blueprint;
+        }
+
+        async function runVisualize() {
+            const discovery = document.getElementById('sov-input').value;
+            const res = await fetch('/api/sovereign/visualize', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({discovery}) });
+            const data = await res.json();
+            document.getElementById('sov-result').innerText = data.prompt;
+        }
+
+        async function runSym() {
+            const discovery = document.getElementById('sov-input').value;
+            const res = await fetch('/api/sovereign/sym/formalize', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({discovery}) });
+            const data = await res.json();
+            document.getElementById('sov-result').innerText = data.formalization;
+        }
+
+        async function updateWiki() {
+            const res = await fetch('/api/sovereign/wiki/update', { method: 'POST' });
+            const data = await res.json();
+            alert("Wiki generated at: " + data.path);
+        }
+
+        async function runTerminal() {
+            const cmd = document.getElementById('term-input').value;
+            const res = await fetch('/api/system/terminal', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({command: cmd}) });
+            const data = await res.json();
+            document.getElementById('system-log').innerText = data.output;
+        }
+
+        async function pollThoughts() {
+            const res = await fetch('/api/thoughts');
+            const data = await res.json();
+            let html = "";
+            data.forEach(t => {
+                html += `<div style="margin-bottom:10px; border-left: 2px solid #4493f8; padding-left: 10px;">
+                    <div style="color:#4493f8; font-weight:bold; font-size: 0.6rem;">${t.agent.toUpperCase()}</div>
+                    <div style="margin-top:2px;">${t.msg}</div>
+                </div>`;
+            });
+            document.getElementById('thought-log').innerHTML = html;
+        }
+
+        setInterval(pollThoughts, 2000);
+    </script>
+</body>
+</html>

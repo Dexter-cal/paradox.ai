@@ -1,0 +1,65 @@
+[
+  {
+    "timestamp": "2026-01-20T17:05:36.745221",
+    "project": "default",
+    "action": "exploration_result",
+    "details": {
+      "scenario": "What if we have a test?",
+      "result": "This is a test discovery."
+    }
+  },
+  {
+    "timestamp": "2026-01-20T17:09:36.416611",
+    "project": "default",
+    "action": "exploration_result",
+    "details": {
+      "scenario": "What if we have a test?",
+      "result": "This is a test discovery."
+    }
+  },
+  {
+    "timestamp": "2026-01-20T17:19:01.527307",
+    "project": "default",
+    "action": "exploration_result",
+    "details": {
+      "scenario": "What if we have a test?",
+      "result": "This is a test discovery."
+    }
+  },
+  {
+    "timestamp": "2026-01-20T17:51:58.599289",
+    "project": "default",
+    "action": "exploration_result",
+    "details": {
+      "scenario": "What if we have a test?",
+      "result": "This is a test discovery."
+    }
+  },
+  {
+    "timestamp": "2026-01-20T18:15:50.173322",
+    "project": "default",
+    "action": "exploration_result",
+    "details": {
+      "scenario": "What if we have a test?",
+      "result": "This is a test discovery."
+    }
+  },
+  {
+    "timestamp": "2026-01-22T14:34:50.313750",
+    "project": "default",
+    "action": "exploration_result",
+    "details": {
+      "scenario": "What if we have a test?",
+      "result": "This is a test discovery."
+    }
+  },
+  {
+    "timestamp": "2026-01-22T14:36:28.827108",
+    "project": "default",
+    "action": "exploration_result",
+    "details": {
+      "scenario": "What if we have a test?",
+      "result": "This is a test discovery."
+    }
+  }
+]
